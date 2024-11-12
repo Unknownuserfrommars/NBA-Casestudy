@@ -8,7 +8,7 @@ import pandas as pd  # noqa: E402
 pcq = px.colors.qualitative
 pd.options.plotting.backend = "plotly"
 
-my_path = "D:\\DATAQUEST.io\\ipynb jupyter notebook\\NBA DATASET KAGGLE"
+my_path = ""
 
 # Read in the dataset
 player_totals = pd.read_csv(f"{my_path}\\Player Totals.csv")
