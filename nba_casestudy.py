@@ -2,13 +2,13 @@
 import streamlit as st
 from streamlit_option_menu import option_menu as menu
 st.set_page_config(layout="wide")
-import numpy as np  # noqa: F401, E402
+import numpy as np  # noqa: E402
 import plotly.express as px  # noqa: E402
 import pandas as pd  # noqa: E402
 pcq = px.colors.qualitative
 pd.options.plotting.backend = "plotly"
 
-my_path = ""
+my_path = "D:\\DATAQUEST.io\\ipynb jupyter notebook\\NBA DATASET KAGGLE\\"
 
 # Read in the dataset
 player_totals = pd.read_csv(my_path + "Player Totals.csv")
@@ -70,7 +70,7 @@ player_totals['tpg'] = player_totals['tov'] / player_totals['g']
 
 # Drop some columns that are not useful in this project
 CVar = ["player","ancient_pos","lg","tm", "seasons_played"]
-NVar = ["season","pts","ast","fg","fga","ft","fta","g", 'fgm', 'ftm', 'ovr', 'age', 'x3p', 'x3pa', 'x2p', 'x2pa', 'pf', 'tov', 'per', 'ppg', 'rpg', 'orpg', 'drpg', 'apg', 'bpg', 'spg']
+NVar = ['season',"experience","pts","ast","fg","fga","ft","fta","g", 'fgm', 'ftm', 'ovr', 'age', 'x3p', 'x3pa', 'x2p', 'x2pa', 'pf', 'tov', 'per', 'ppg', 'rpg', 'orpg', 'drpg', 'apg', 'bpg', 'spg']
 nba_graph = player_totals[CVar + NVar].copy()
 
 # Team name cleaning
@@ -214,6 +214,7 @@ def agg(data_frame: pd.DataFrame, groupby_cols: list | str = None, mode: str = '
 # Dictionaries
 num_dict = {
     'season': 'Season',
+    'experience': 'Years of Experience',
     'pts': 'Points',
     'ast': 'Assists',
     'fg': 'Field Goals',
@@ -271,6 +272,7 @@ team_dict = {
     "TOR":'Toronto Raptors',
     'NOP':"New Orleans Pelicans"
 }
+nba_graph['ptn'] = nba_graph['present_teams'].map(team_dict)
 pos_dict = {
     "G":"Guard",
     "F":"Forward",
@@ -365,9 +367,9 @@ all_dict.update(cat_dict)
 with st.sidebar:
 	s = menu(
 		menu_title = 'The Great Navigation Pane of All Time',
-		options = ['Abstract', 'Background Information', 'Data Cleaning','Exploratory Analysis', 'Analysis of GOAT by stats for the ten most popular players', 'Analysis of the NBA Championship teams in iconic seasons', 'Conclusion', 'Bibliography'],
-		menu_icon = 'stack',  # TODO: Change
-		icons = ['bookmark-check', 'book', 'box', 'map', 'key-fill', 'list-check', 'star-fill', 'check2-circle'],  # TODO: Same as line 370
+		options = ['Abstract', 'Background Information', 'Data Cleaning','Finding the GOAT Player', 'Finding the GOAT Team', 'Analysis of GOAT by stats for the ten most popular players', 'Analysis of the NBA Championship teams in iconic seasons', 'Rivalry Team Comparison', 'Conclusion', 'Bibliography'],
+		menu_icon = 'house-door-fill',
+		icons = ['person-arms-up', 'basket', 'filetype-csv', 'search', 'microsoft-teams', 'key-fill', 'trophy-fill', 'flag', 'star-fill', 'list-ol'],
 		default_index = 0,
 		)
 
@@ -377,7 +379,7 @@ if s == "Abstract":
     st.markdown("The debate over who holds the title of the Greatest of All Time (GOAT) in the NBA is one of the most spirited conversations among basketball enthusiasts. From legendary feats to iconic moments, various factors contribute to the greatness of players. However, when the chatter clears and emotions settle, it's the cold, hard stats that offer an objective lens through which we can attempt to settle this debate.")
     st.markdown("In this case study, we delve deep into the world of numbers to crown the NBA GOAT.<sup>2 3 4</sup> We'll explore an array of statistical categories, including scoring averages, assists, rebounds, and advanced metrics. By examining these figures, we aim to provide a comprehensive analysis that transcends personal bias and nostalgia.", unsafe_allow_html=True)
     st.markdown("Join us as we crunch the numbers, compare legends from different eras, and unveil who truly stands atop the NBA mountain based on their statistical dominance. Whether you're a fan of the flashy dunks, the clutch shots, or the all-around game, this case study promises to offer insights and revelations about the legends of the hardwood. Let's dive in and find out who the stats say is the ultimate GOAT!")
-    st.markdown("This dataset is retrieved from kaggle <sup>1</sup>", unsafe_allow_html=True)
+    st.markdown("This dataset is retrieved from Kaggle (https://www.kaggle.com/) <sup>1</sup>", unsafe_allow_html=True)
 
 if s == "Background Information":
     st.title("Background Info")
@@ -476,7 +478,7 @@ if s == "Data Cleaning":
     st.caption("<i>FINALLY!!!</i>", unsafe_allow_html=True)
 
 # Exploratory Graphs
-if s == "Exploratory Analysis":
+if s == "Finding the GOAT Player":
     # Template:
 
     # st.subheader("A title")
@@ -526,6 +528,88 @@ if s == "Exploratory Analysis":
     st.title("Exploratory Analysis")
     st.caption("This is where the fun part comes in :)")
 
+
+
+      #######################################################################################################################################################################
+
+    st.subheader("Visualization of stats across players")
+    col7, col8 = st.columns([2,5])
+    col7.markdown("Compare stats between the scatter plot and the histograms below")
+
+    with st.form("Scatter"): # TODO: Sync with line 614
+        col7_x_input = col7.selectbox("Select a numeric column for the x-axis values", num_dict.values(), key=25)
+        col7_y_input = col7.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), col7_x_input), key=26)
+        col7_player = col7.multiselect("Select some players", nba_75, key=27, max_selections=8)
+        col7_x = [bname for bname, pname in num_dict.items() if pname == col7_x_input][0]
+        col7_y = [bname for bname, pname in num_dict.items() if pname == col7_y_input][0]
+        submitted = st.form_submit_button(a("Scatter Plot"))
+        # TODO: See if you can find more params to add
+        if submitted:
+            df = agg(nba_graph)
+            df = df[df['player'].isin(col7_player)]
+            fig = px.scatter(df, col7_x, col7_y, color='player', labels=all_dict.values(), title="", hover_data=['player', 'season', 'pts'])
+            fig.update_traces(marker_line_width=1)
+            col8.plotly_chart(fig)
+
+        #####################################################################################################################################################################
+
+    st.subheader("Compare stats across players")
+    col5, col6 = st.columns([2,5])
+    col5.markdown(".") # TODO: Same as line 520
+
+    with st.form("Histogram"): # TODO: Sync with line 583
+        col5_x_input = col5.selectbox("Select a numeric column for the x-axis values", np.setdiff1d(list(num_dict.values()), ['Age']), key=17)
+        col5_y_input = col5.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), [col5_x_input]), key=18)
+        col5_player = col5.multiselect("Select some players", nba_75, key=19, max_selections=75)
+        col5_x = [bname for bname, pname in num_dict.items() if pname == col5_x_input][0]
+        col5_y = [bname for bname, pname in num_dict.items() if pname == col5_y_input][0]
+        submitted = st.form_submit_button(a("Histogram"))
+        histnorm_checkbox = col5.checkbox("Click for a normalized histogram", key=20)
+        barmode_checkbox = col5.checkbox("Click for a stack histogram chart", key=21)
+        usr_sel_bin_num = col5.checkbox("Do you want to select the number of bins? (Default is 10)", key=22)
+        logy = col5.checkbox("Do you want logy?", key=24)
+        bins = col5.slider("The amount of bins you want", 5, 35, step=1, key=1002) if usr_sel_bin_num else 10  # Might not work... we'll see
+        histnorm = 'percent' if histnorm_checkbox else None
+        histfunc = 'avg' if not histnorm else None
+        barmode = 'relative' if barmode_checkbox else 'group'
+        if submitted:
+            df = agg(nba_graph)
+            df = df[df['player'].isin(col5_player)]
+            fig = px.histogram(df, col5_x, col5_y, color='player', histfunc=histfunc, histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict, title="", log_y=logy, hover_data=['player', 'ancient_pos'])
+            fig.update_traces(marker_line_width=1)
+            col6.plotly_chart(fig)
+
+
+    col1, col2 = st.columns([2,5])
+    col1.markdown("The histograms show patterns of the players' stats across positions. If you think this is not straightforward, feel free to go back to the scatter plot above and find more.") 
+
+    with st.form("Histogram: 2 numeric; 1 category: position"):  # TODO: Make it better (Sync with line 518)
+        # For this one: 2 selectboxes
+        col1_x_input = col1.selectbox("Select a numeric column for the x-axis values", np.setdiff1d(list(num_dict.values()), ['Age']), key=1)
+        col1_y_input = col1.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), [col1_x_input, 'Age']), key=2) # type: ignore
+        # col1_color_input = col1.selectbox("Select a category column for the color value", cat_dict.values(), key=3)
+        # Key value 3 reserved
+        col1_x = [bname for bname, pname in num_dict.items() if pname == col1_x_input][0]
+        col1_y = [bname for bname, pname in num_dict.items() if pname == col1_y_input][0]
+        # col1_color = [bname for bname,pname in cat_dict.items() if pname==col1_color_input][0]
+        submitted = st.form_submit_button(a("Histogram"))
+        histnorm_checkbox = col1.checkbox("Click for a normalized histogram", key=4)
+        barmode_checkbox = col1.checkbox("Click for a stack histogram chart", key=5)
+        usr_sel_bin_num = col1.checkbox("Do you want to select the number of bins? (Default is 10)", key=6)
+        
+        logy = col1.checkbox("Do you want logy?", key=8)
+        bins = col1.slider("The amount of bins you want", 5, 35, step=1, key=1000) if usr_sel_bin_num else 10  # Might not work... we'll see
+        histnorm = 'percent' if histnorm_checkbox else None
+        histfunc = 'avg' if not histnorm else None
+        barmode = 'relative' if barmode_checkbox else 'group'
+        if submitted:
+            df = agg(nba_graph)
+            fig = px.histogram(df, col1_x, col1_y, color='ancient_pos', histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict, title="", histfunc=histfunc, log_y=logy)
+            fig.update_traces(marker_line_width=1)
+            col2.plotly_chart(fig)
+
+    ####
+    
     st.subheader("Box Plot to compare stats for players across different seasons")
     col13, col14 = st.columns([2,5])
     col13.markdown("This is a rather generic plot for showing patterns across stats. Some of the more detailed graphes will be shown (above/below).") # TODO: Describe what kind of info can you get from this
@@ -584,116 +668,7 @@ if s == "Exploratory Analysis":
         if hahahaha:
             st.write("Hmmm... Your keyboard seem's to have its own opinions... If this problem persists, please seek for professional help.")
 
-      #######################################################################################################################################################################
 
-    st.subheader("Visualization of stats across players")
-    col7, col8 = st.columns([2,5])
-    col7.markdown("In the histograms, you may find it hard to find some patterns. It'll be easier to find patterns in this scatter plot.") # TODO: Same as line 520
-    col7.markdown("Compare stats between the scatter plot and the histograms below")
-
-    with st.form("Scatter"): # TODO: Sync with line 614
-        col7_x_input = col7.selectbox("Select a numeric column for the x-axis values", num_dict.values(), key=25)
-        col7_y_input = col7.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), col7_x_input), key=26)
-        col7_player = col7.multiselect("Select some players", nba_75, key=27, max_selections=8)
-        col7_x = [bname for bname, pname in num_dict.items() if pname == col7_x_input][0]
-        col7_y = [bname for bname, pname in num_dict.items() if pname == col7_y_input][0]
-        submitted = st.form_submit_button(a("Scatter Plot"))
-        # TODO: See if you can find more params to add
-        if submitted:
-            df = agg(nba_graph)
-            df = df[df['player'].isin(col7_player)]
-            fig = px.scatter(df, col7_x, col7_y, color='player', labels=all_dict.values(), title="", hover_data=['player', 'season', 'pts'])
-            fig.update_traces(marker_line_width=1)
-            col8.plotly_chart(fig)
-
-        #####################################################################################################################################################################
-
-    col1, col2 = st.columns([2,5])
-    col1.markdown("The histograms show patterns of the players' stats across positions. If you think this is not straightforward, feel free to go back to the scatter plot above and find more.") 
-
-    with st.form("Histogram: 2 numeric; 1 category: position"):  # TODO: Make it better (Sync with line 518)
-        # For this one: 2 selectboxes
-        col1_x_input = col1.selectbox("Select a numeric column for the x-axis values", np.setdiff1d(list(num_dict.values()), ['Age']), key=1)
-        col1_y_input = col1.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), [col1_x_input, 'Age']), key=2) # type: ignore
-        # col1_color_input = col1.selectbox("Select a category column for the color value", cat_dict.values(), key=3)
-        # Key value 3 reserved
-        col1_x = [bname for bname, pname in num_dict.items() if pname == col1_x_input][0]
-        col1_y = [bname for bname, pname in num_dict.items() if pname == col1_y_input][0]
-        # col1_color = [bname for bname,pname in cat_dict.items() if pname==col1_color_input][0]
-        submitted = st.form_submit_button(a("Histogram"))
-        histnorm_checkbox = col1.checkbox("Click for a normalized histogram", key=4)
-        barmode_checkbox = col1.checkbox("Click for a stack histogram chart", key=5)
-        usr_sel_bin_num = col1.checkbox("Do you want to select the number of bins? (Default is 10)", key=6)
-        
-        logy = col1.checkbox("Do you want logy?", key=8)
-        bins = col1.slider("The amount of bins you want", 5, 35, step=1, key=1000) if usr_sel_bin_num else 10  # Might not work... we'll see
-        histnorm = 'percent' if histnorm_checkbox else None
-        histfunc = 'avg' if not histnorm else None
-        barmode = 'relative' if barmode_checkbox else 'group'
-        if submitted:
-            df = agg(nba_graph)
-            fig = px.histogram(df, col1_x, col1_y, color='ancient_pos', histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict, title="", histfunc=histfunc, log_y=logy)
-            fig.update_traces(marker_line_width=1)
-            col2.plotly_chart(fig)
-
-    #####
-    st.subheader("Compare stats across players")
-    col5, col6 = st.columns([2,5])
-    col5.markdown(".") # TODO: Same as line 520
-
-    with st.form("Histogram"): # TODO: Sync with line 583
-        col5_x_input = col5.selectbox("Select a numeric column for the x-axis values", np.setdiff1d(list(num_dict.values()), ['Age']), key=17)
-        col5_y_input = col5.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), [col5_x_input]), key=18)
-        col5_player = col5.multiselect("Select some players", nba_75, key=19, max_selections=75)
-        col5_x = [bname for bname, pname in num_dict.items() if pname == col5_x_input][0]
-        col5_y = [bname for bname, pname in num_dict.items() if pname == col5_y_input][0]
-        submitted = st.form_submit_button(a("Histogram"))
-        histnorm_checkbox = col5.checkbox("Click for a normalized histogram", key=20)
-        barmode_checkbox = col5.checkbox("Click for a stack histogram chart", key=21)
-        usr_sel_bin_num = col5.checkbox("Do you want to select the number of bins? (Default is 10)", key=22)
-        logy = col5.checkbox("Do you want logy?", key=24)
-        bins = col5.slider("The amount of bins you want", 5, 35, step=1, key=1002) if usr_sel_bin_num else 10  # Might not work... we'll see
-        histnorm = 'percent' if histnorm_checkbox else None
-        histfunc = 'avg' if not histnorm else None
-        barmode = 'relative' if barmode_checkbox else 'group'
-        if submitted:
-            df = agg(nba_graph)
-            df = df[df['player'].isin(col5_player)]
-            fig = px.histogram(df, col5_x, col5_y, color='player', histfunc=histfunc, histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict, title="", log_y=logy, hover_data=['player', 'ancient_pos'])
-            fig.update_traces(marker_line_width=1)
-            col6.plotly_chart(fig)
-
-    st.subheader("Histogram of comparing stats across different teams")
-    col3, col4 = st.columns([2,5])
-    col3.markdown("") # TODO: Same as line 520
-
-    with st.form("Histogram: 2 numeric; Category: Team"): # TODO: Sync with line 549
-        col3_x_input = col3.selectbox("Select a numeric column for the x-axis values", np.setdiff1d(list(num_dict.values()), ['Age']), key=9)
-        col3_y_input = col3.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), [col3_x_input, 'Age']), key=10) # type: ignore
-        col3_team_input = col3.multiselect("Select some team names", team_dict.values(), key=11, max_selections=10)
-        col3_x = [bname for bname, pname in num_dict.items() if pname == col3_x_input][0]
-        col3_y = [bname for bname, pname in num_dict.items() if pname == col3_y_input][0]
-        col3_team = [bname for bname,pname in team_dict.items() if pname in col3_team_input]
-        submitted = st.form_submit_button(a("Histogram"))
-        histnorm_checkbox = col3.checkbox("Click for a normalized histogram", key=12)
-        barmode_checkbox = col3.checkbox("Click for a stack histogram chart", key=13)
-        usr_sel_bin_num = col3.checkbox("Do you want to select the number of bins? (Default is 10)", key=14)
-        logy = col3.checkbox("Do you want logy?", key=16)
-        bins = col3.slider("The amount of bins you want", 5, 35, step=1, key=1001) if usr_sel_bin_num else 10  # Might not work... we'll see
-        histnorm = 'percent' if histnorm_checkbox else None
-        histfunc = 'avg' if not histnorm else None
-        barmode = 'relative' if barmode_checkbox else 'group'
-        if submitted:
-            # st.write(col3_team)
-            df = agg(nba_graph, ['present_teams'])
-            # st.write(df)
-            df = df[df['present_teams'].isin(col3_team)]
-            # st.write(df)
-            fig = px.histogram(df, col3_x, col3_y, color='present_teams', histfunc=histfunc, histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict, title="", log_y=logy)
-            fig.update_traces(marker_line_width=1)
-            col4.plotly_chart(fig)
-    
-    # Optional TODO: Facet Plots
 
     #########################################################################################################################################################################
     
@@ -725,6 +700,7 @@ if s == "Exploratory Analysis":
 
     #########################################################################################################################################################################
         
+    ### GENERAL STATS
     st.subheader("Compare avg stats across players")
     st.caption("We'll be using the average dataset for this one!")
     col9, col10 = st.columns([2,5])
@@ -753,119 +729,96 @@ if s == "Exploratory Analysis":
             col10.plotly_chart(fig)
 
     #####
-    st.subheader("Compare avg stats across teams")
-    st.caption("`graph_avg` will also be used for this one!")
-    col11, col12 = st.columns([2,5])
-
-    with st.form("Histogram.."): # TODO: Sync with line 659
-        col11_x_input = col11.selectbox("Select a numeric column for the x-axis values", num_dict.values(), key=41)
-        col11_y_input = col11.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), col11_x_input), key=42)
-        col11_team_input = col11.multiselect("Select some teams", team_dict.values(), key=43, max_selections=20) # Optional TODO: same as line 599
-        col11_x = [bname for bname, pname in num_dict.items() if pname == col11_x_input][0]
-        col11_y = [bname for bname, pname in num_dict.items() if pname == col11_y_input][0]
-        col11_team = [bname for bname, pname in team_dict.items() if pname in col11_team_input]
-        histnorm_checkbox = col11.checkbox("Click for a normalized histogram", key=44)
-        barmode_checkbox = col11.checkbox("Click for a stack histogram chart", key=45)
-        usr_sel_bin_num = col11.checkbox("Do you want to select the number of bins? (Default is 10)", key=46)
-        logy = col11.checkbox("Do you want logy?", key=48)
-        bins = col11.slider("The amount of bins you want", 5, 35, step=1, key=1005) if usr_sel_bin_num else 10  # Might not work... we'll see
-        histnorm = 'percent' if histnorm_checkbox else None
-        histfunc = 'avg' if not histnorm else None
-        barmode = 'relative' if barmode_checkbox else 'group'
-        submitted = st.form_submit_button(a("Histogram"))
-        if submitted:
-            x11 = agg(nba_graph, ['player', 'ancient_pos', 'present_teams'], 'mean')
-            x11 = x11[x11['present_teams'].isin(col11_team)]
-            # # Some TESTS during debugging
-            # col11.write(x11)
-            # col11.write(col11_team_input)
-            # col11.write(col11_team)
-            fig = px.histogram(x11, col11_x, col11_y, color='present_teams', histfunc=histfunc, histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict.values(), title="", log_y=logy)
-            fig.update_traces(marker_line_width=1)
-            col12.plotly_chart(fig)
 
     ########################################################################################################################################################################
-    st.subheader("Box Plot to compare stats for players across different seasons")
-    col13, col14 = st.columns([2,5])
+    # st.subheader("Box Plot to compare stats for players across different seasons")
+    # col13, col14 = st.columns([2,5])
 
-    with st.form("Box"): # TODO: Sync with line 691
-        df = nba_graph.copy()
-        col13_season = col13.multiselect("Select some seasons", df['season'].unique(), key=49, max_selections=10)
-        col13_y_input = col13.selectbox("Select a numeric column for the y-axis values", num_dict.values(), key=50)
-        col13_y = [bname for bname, pname in num_dict.items() if pname == col13_y_input][0]
-        # Key 51 is reserved
-        col13_radio_choice = col13.multiselect("Select some players:", nba_75, key=1551, max_selections=20)
-        submitted = st.form_submit_button(a("Box plot"))
-        # Key 52 is reserved
-        boxmode_checkbox = col13.checkbox("Click for a different boxmode", key=53)
-        # Keys 54,55 are ALSO reserved
-        logy = col13.checkbox("Do you want logy?", key=56)
-        # Key 1006 ALSO reserved
-        boxmode = 'relative' if barmode_checkbox else 'group'
-        if submitted:
-            choice = 'player'
-            # st.write(df.columns)
-            df = df[df[choice].isin(col13_radio_choice)]
-            df = df[df['season'].isin(col13_season)]
-            # st.write(df)
-            fig = px.box(df, 'season', col13_y, color=choice, hover_data=['season'], boxmode=boxmode, log_y=logy, height=800, width=600, title="", labels=all_dict.values(), points='all', hover_name=choice)
-            fig.update_traces(marker_line_width=1)
-            col14.plotly_chart(fig)
+    # with st.form("Boxplot"): # TODO: Sync with line 691
+    #     df = nba_graph.copy()
+    #     col13_season = col13.multiselect("Select some seasons", df['season'].unique(), key=49, max_selections=10)
+    #     col13_y_input = col13.selectbox("Select a numeric column for the y-axis values", num_dict.values(), key=50)
+    #     col13_y = [bname for bname, pname in num_dict.items() if pname == col13_y_input][0]
+    #     # Key 51 is reserved
+    #     col13_radio_choice = col13.multiselect("Select some players:", nba_75, key=1551, max_selections=20)
+    #     submitted = st.form_submit_button(a("Box plot"))
+    #     # Key 52 is reserved
+    #     boxmode_checkbox = col13.checkbox("Click for a different boxmode", key=53)
+    #     # Keys 54,55 are ALSO reserved
+    #     logy = col13.checkbox("Do you want logy?", key=56)
+    #     # Key 1006 ALSO reserved
+    #     boxmode = 'relative' if barmode_checkbox else 'group'
+    #     if submitted:
+    #         choice = 'player'
+    #         # st.write(df.columns)
+    #         df = df[df[choice].isin(col13_radio_choice)]
+    #         df = df[df['season'].isin(col13_season)]
+    #         # st.write(df)
+    #         fig = px.box(df, 'season', col13_y, color=choice, hover_data=['season'], boxmode=boxmode, log_y=logy, height=800, width=600, title="", labels=all_dict.values(), points='all', hover_name=choice)
+    #         fig.update_traces(marker_line_width=1)
+    #         col14.plotly_chart(fig)
 
-    #####
-    st.subheader("Box Plot to compare stats for players across different teams")
-    col27, col28 = st.columns([2,5])
+    # #####
+    # st.subheader("Box Plot to compare stats for players across different teams")
+    # col27, col28 = st.columns([2,5])
 
-    with st.form('box2'):
-        df = nba_graph.copy()
-        col27_team_input = col27.multiselect("Select some teams", df['tm'].unique(), key=129, max_selections=10)
-        col27_y_input = col27.selectbox("select a numeric column for the y-axis values", num_dict.values(), key=130)
-        col27_player = col27.multiselect("Select some players", nba_75, max_selections=10, key=133)
-        col27_team = [bname for bname, pname in team_dict.items() if pname in col27_team_input]
-        col27_y = [bname for bname, pname in num_dict.items() if pname == col27_y_input][0]
-        submitted = st.form_submit_button(a("Box Plot"))
-        boxmode_checkbox = col27.checkbox("Click for a different boxmode", key=131)
-        logy = col27.checkbox("Do you want logy?", key=132)
-        boxmode = 'relative' if boxmode_checkbox else 'group'
-        if submitted:
-            df = df[df['tm'].isin(col27_team)]
-            df = df[df['player'].isin(col27_player)]
-            fig = px.box(df, 'tm', col27_y, color='player', hover_data=['pts', 'ast', 'player', 'season'], boxmode=boxmode, log_y=logy, title="", labels=all_dict.values(), points='all', hover_name='player')
-            fig.update_traces(marker_line_width=1)
-            col28.plotly_chart(fig)
+    # with st.form('box2'):
+    #     df = nba_graph.copy()
+    #     col27_team_input = col27.multiselect("Select some teams", df['tm'].unique(), key=129, max_selections=10)
+    #     col27_y_input = col27.selectbox("select a numeric column for the y-axis values", num_dict.values(), key=130)
+    #     col27_player = col27.multiselect("Select some players", nba_75, max_selections=10, key=133)
+    #     col27_team = [bname for bname, pname in team_dict.items() if pname in col27_team_input]
+    #     col27_y = [bname for bname, pname in num_dict.items() if pname == col27_y_input][0]
+    #     submitted = st.form_submit_button(a("Box Plot"))
+    #     boxmode_checkbox = col27.checkbox("Click for a different boxmode", key=131)
+    #     logy = col27.checkbox("Do you want logy?", key=132)
+    #     boxmode = 'relative' if boxmode_checkbox else 'group'
+    #     if submitted:
+    #         df = df[df['tm'].isin(col27_team)]
+    #         df = df[df['player'].isin(col27_player)]
+    #         fig = px.box(df, 'tm', col27_y, color='player', hover_data=['pts', 'ast', 'player', 'season'], boxmode=boxmode, log_y=logy, title="", labels=all_dict.values(), points='all', hover_name='player')
+    #         fig.update_traces(marker_line_width=1)
+    #         col28.plotly_chart(fig)
 
-    st.markdown("<hr>", unsafe_allow_html=True)
+    # st.markdown("<hr>", unsafe_allow_html=True)
 
-    with st.form("Hahaha"):
-        hahaha = st.radio("Do you want more box plots?", ['Yes'], key=1000000)
-        hahahaha = st.form_submit_button("Produce more!!! CLICK ME CLICK ME!!!")
-        if hahahaha:
-            st.write("Hmmm... Your keyboard seem's to have its own opinions... If this problem persists, please seek for professional help.")
+    # with st.form("Hahaha"):
+    #     hahaha = st.radio("Do you want more box plots?", ['Yes'], key=1000000)
+    #     hahahaha = st.form_submit_button("Produce more!!! CLICK ME CLICK ME!!!")
+    #     if hahahaha:
+    #         st.write("Hmmm... Your keyboard seem's to have its own opinions... If this problem persists, please seek for professional help.")
 
     #########################################################################################################################################################################
     st.subheader("Line plot for comparing stats across players")
     col15, col16 = st.columns([2,5])
 
     with st.form("Line"): # TODO: Sync with Line 749
-        col15_x_input = col15.selectbox("Select a numeric column for the x-axis values", num_dict.values(), key=57)
-        col15_y_input = col15.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), col15_x_input), key=58)
-        col15_player = col15.multiselect("Select some players", nba_75, max_selections=10, key=59)
-        col15_x = [bname for bname, pname in num_dict.items() if pname == col15_x_input][0]
+        # TODO: Not DYNAMIC INPUT, use player exp. (Season 1, 2, ...) not year
+        col15_pos_input = col15.selectbox("Pick a position", ['Center', 'Forward', 'Guard'], key=57)
+        if col15_pos_input == 'Center':
+            valid = nba_graph[nba_graph['ancient_pos'].isin(['C', 'C-F'])]
+        elif col15_pos_input == 'Forward':
+            valid = nba_graph[nba_graph['ancient_pos'].isin(['F', 'F-G'])]
+        else:
+            valid = nba_graph[nba_graph['ancient_pos'].isin(['G', 'G-F'])]
+        col15_y_input = col15.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), ['Years of Experience', 'Season']), key=58)
+        col15_player = col15.multiselect("Select some players", valid['player'].unique(), max_selections=10, key=59)
+        # col15_x = [bname for bname, pname in num_dict.items() if pname == col15_x_input][0]
         col15_y = [bname for bname, pname in num_dict.items() if pname == col15_y_input][0]
         # Keys 60~63 are reserved
         logy = col15.checkbox("Do you want logy?", key=64)
         submitted = st.form_submit_button(a("Line Plot"))
         if submitted:
-            df = agg(nba_graph)
-            df = df[df['player'].isin(col15_player)]
-            fig = px.line(df, col15_x, col15_y, color=col15_player, title=".", labels=all_dict.values(), log_y=logy)
+            df = agg(nba_graph, ['player', 'experience'])
+            df = df[df['player'].isin(col15_player)].sort_values('experience')
+            fig = px.line(df, 'experience', col15_y, color='player', title=".", labels=all_dict.values(), log_y=logy)
             fig.update_traces(marker_line_width=1)
             col16.plotly_chart(fig)
 
     #########################################################################################################################################################################
     st.subheader("Sunburst Plot for comparing stats for teams and players")
     col17, col18 = st.columns([2,5])
-
+    ### PLAYER-TEAM
     with st.form("Sunburst"):
         # choice = col17.selectbox("Select the columns you want to show in this graph: (Format: inner_circle-outer_circle)", tochoose, key=1601)
         numcol_input = col17.selectbox("Select a numeric column:", num_dict.values(), key=86)
@@ -972,27 +925,12 @@ if s == "Exploratory Analysis":
     #             col18.plotly_chart(fig)
 
     #####
-    st.subheader("Sunburst Plot for comparing stats for teams and seasons")
-    col25, col26 = st.columns([2,5])
+    ### TEAMS-SEASONS (GOAT TEAM)
 
-    with st.form("?"):
-        numcol_input = col25.selectbox("Select a numeric column:", np.setdiff1d(list(num_dict.values()), 'Season'), key=119)
-        numcol = [bname for bname, pname in num_dict.items() if pname == numcol_input][0]
-        df1 = agg(nba_graph, ['tm', 'ancient_pos', 'season'])
-        df1 = df1[df1['tm'].isin(team_dict.keys())]
-        df1['tm'] = df1['tm'].replace(team_dict)
-        col25_team_input = col25.multiselect("Select some teams:", df1['tm'].unique(), key=120, max_selections=10)
-        df1 = df1[df1['tm'].isin(col25_team_input)]
-        col25_season_input = col25.multiselect("Select some seasons:", df1['season'].unique(), key=121)
-        bool_idx = (df1['tm'].isin(col25_team_input)) & (df1['season'].isin(col25_season_input))
-        sppath = ['tm', 'season'] 
-        submitted = st.form_submit_button(a("Sunburst"))
-        if submitted:
-            fig1 = px.sunburst(df1[bool_idx], values=numcol, path=sppath, height=800, width=600)
-            col26.plotly_chart(fig1)
 
     #########################################################################################################################################################################
     # TODO: Change ALL to LINE PLOTS!
+    ### PLAYER-EXP (GOAT PLAYER)
     st.subheader("Histogram for comparing a player's overall score across his age")
     col19, col20 = st.columns([2,5])
 
@@ -1020,7 +958,7 @@ if s == "Exploratory Analysis":
 
 
     #####
-
+    ### PLAYER-EXP (GOAT PLAYER)
     st.subheader("Histogram for comparing a player's 2-pointers/3-pointers made across his age")
     col23, col24 = st.columns([2,5])
     # Player vs x2p, x3p, color = age
@@ -1042,6 +980,135 @@ if s == "Exploratory Analysis":
             fig = px.histogram(df1, 'player', f'{x2p_x3p}', 'age', histnorm=histnorm, histfunc=histfunc, barmode=barmode, nbins=bins)
             fig.update_traces(marker_line_width=1)
             col24.plotly_chart(fig)
+    
+    #########################################################################################################################################################################
+
+
+
+###########################################
+
+
+if s == 'Finding the GOAT Team':
+    def a (graph_type: str) -> str:
+        return f"Click to produce the {graph_type}."
+    
+    st.subheader("Exploratory for comparing two teams in a season")
+    ### GOAT TEAM
+    col29, col30 = st.columns([4, 8])
+    # st.text("You might ONLY see the multiselect box of the two teams. This is because the code uses an if statement to check the length of the selected list.", help='You may also see a \'Missing form submit button\' (or is it only ME from the pre-deploy page?), this is alright. You can see the button after 2 teams is selected.')
+
+    with st.form("XXX"):
+        col29_team_input_1 = col29.selectbox("Select first team", team_dict.values(), key=137)
+        col29_team_input_2 = col29.selectbox("Select second team", np.setdiff1d(list(team_dict.values()), col29_team_input_1), key=138)
+        # if len(col29_team_input) == 2:
+        team_1, team_2 = col29_team_input_1, col29_team_input_2
+        filtered_data = nba_graph[nba_graph['ptn'].isin([team_1, team_2])]
+        valid_seasons = filtered_data.groupby('ptn')['season'].apply(set).to_dict()
+        if team_1 in valid_seasons and team_2 in valid_seasons:
+            common_seasons = valid_seasons[team_1].intersection(valid_seasons[team_2])
+            if len(common_seasons) > 0:
+                col29_season_input = col29.selectbox("Select a season", sorted(common_seasons), key=134)
+                final_df = filtered_data[filtered_data['season'] == col29_season_input]
+                yaxis_data = col29.selectbox("Select y-axis stat", NVar[1:], key=135)
+                textposition_outside = col29.selectbox("Text outside bars? (Recommended: YES)", ["Yes", "No"], key=136)
+                textpos = "outside" if textposition_outside == "Yes" else "inside"
+                submitted = st.form_submit_button(a("Bar chart"))
+                if submitted:
+                    fig = px.bar(final_df, x="player", y=yaxis_data, color="ptn", text_auto=True, height=600, width=800)
+                    fig.update_traces(textposition=textpos, texttemplate="<b>%{y:.2f}</b>")
+                    fig.update_xaxes(categoryorder="total descending", matches=None, showticklabels=True, tickangle=45)
+                    col30.plotly_chart(fig)
+            else: st.error(f"The selected teams ({team_1} and {team_2}) do not share any common seasons.")  # noqa: E701
+        else: st.error(f"One or both teams ({team_1} and {team_2}) do not exist in the dataset.") # noqa: E701
+        # else: st.info("Please select exactly 2 teams to proceed.") # noqa: E701
+
+
+    st.subheader("Sunburst Plot for comparing stats for teams and seasons")
+    col25, col26 = st.columns([2,5])
+
+    with st.form("?"):
+        numcol_input = col25.selectbox("Select a numeric column:", np.setdiff1d(list(num_dict.values()), 'Season'), key=119)
+        numcol = [bname for bname, pname in num_dict.items() if pname == numcol_input][0]
+        df1 = agg(nba_graph, ['tm', 'ancient_pos', 'season'])
+        df1 = df1[df1['tm'].isin(team_dict.keys())]
+        df1['tm'] = df1['tm'].replace(team_dict)
+        col25_team_input = col25.multiselect("Select some teams:", df1['tm'].unique(), key=120, max_selections=10)
+        df1 = df1[df1['tm'].isin(col25_team_input)]
+        col25_season_input = col25.multiselect("Select some seasons:", df1['season'].unique(), key=121)
+        bool_idx = (df1['tm'].isin(col25_team_input)) & (df1['season'].isin(col25_season_input))
+        sppath = ['tm', 'season'] 
+        submitted = st.form_submit_button(a("Sunburst"))
+        if submitted:
+            fig1 = px.sunburst(df1[bool_idx], values=numcol, path=sppath, height=800, width=600)
+            col26.plotly_chart(fig1)
+
+
+    st.subheader("Compare avg stats across teams")
+    st.caption("`graph_avg` will also be used for this one!")
+    col11, col12 = st.columns([2,5])
+
+    with st.form("Histogram.."): # TODO: Sync with line 659
+        col11_x_input = col11.selectbox("Select a numeric column for the x-axis values", num_dict.values(), key=41)
+        col11_y_input = col11.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), col11_x_input), key=42)
+        col11_team_input = col11.multiselect("Select some teams", team_dict.values(), key=43, max_selections=20) # Optional TODO: same as line 599
+        col11_x = [bname for bname, pname in num_dict.items() if pname == col11_x_input][0]
+        col11_y = [bname for bname, pname in num_dict.items() if pname == col11_y_input][0]
+        col11_team = [bname for bname, pname in team_dict.items() if pname in col11_team_input]
+        histnorm_checkbox = col11.checkbox("Click for a normalized histogram", key=44)
+        barmode_checkbox = col11.checkbox("Click for a stack histogram chart", key=45)
+        usr_sel_bin_num = col11.checkbox("Do you want to select the number of bins? (Default is 10)", key=46)
+        logy = col11.checkbox("Do you want logy?", key=48)
+        bins = col11.slider("The amount of bins you want", 5, 35, step=1, key=1005) if usr_sel_bin_num else 10  # Might not work... we'll see
+        histnorm = 'percent' if histnorm_checkbox else None
+        histfunc = 'avg' if not histnorm else None
+        barmode = 'relative' if barmode_checkbox else 'group'
+        submitted = st.form_submit_button(a("Histogram"))
+        if submitted:
+            x11 = agg(nba_graph, ['player', 'ancient_pos', 'present_teams'], 'mean')
+            x11 = x11[x11['present_teams'].isin(col11_team)]
+            # # Some TESTS during debugging
+            # col11.write(x11)
+            # col11.write(col11_team_input)
+            # col11.write(col11_team)
+            fig = px.histogram(x11, col11_x, col11_y, color='present_teams', histfunc=histfunc, histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict.values(), title="", log_y=logy)
+            fig.update_traces(marker_line_width=1)
+            col12.plotly_chart(fig)
+
+        
+    
+
+    st.subheader("Histogram of comparing stats across different teams")
+    col3, col4 = st.columns([2,5])
+    col3.markdown("") # TODO: Same as line 520
+
+    with st.form("Histogram: 2 numeric; Category: Team"): # TODO: Sync with line 549
+        col3_x_input = col3.selectbox("Select a numeric column for the x-axis values", np.setdiff1d(list(num_dict.values()), ['Age']), key=9)
+        col3_y_input = col3.selectbox("Select a numeric column for the y-axis values", np.setdiff1d(list(num_dict.values()), [col3_x_input, 'Age']), key=10) # type: ignore
+        col3_team_input = col3.multiselect("Select some team names", team_dict.values(), key=11, max_selections=10)
+        col3_x = [bname for bname, pname in num_dict.items() if pname == col3_x_input][0]
+        col3_y = [bname for bname, pname in num_dict.items() if pname == col3_y_input][0]
+        col3_team = [bname for bname,pname in team_dict.items() if pname in col3_team_input]
+        submitted = st.form_submit_button(a("Histogram"))
+        histnorm_checkbox = col3.checkbox("Click for a normalized histogram", key=12)
+        barmode_checkbox = col3.checkbox("Click for a stack histogram chart", key=13)
+        usr_sel_bin_num = col3.checkbox("Do you want to select the number of bins? (Default is 10)", key=14)
+        logy = col3.checkbox("Do you want logy?", key=16)
+        bins = col3.slider("The amount of bins you want", 5, 35, step=1, key=1001) if usr_sel_bin_num else 10  # Might not work... we'll see
+        histnorm = 'percent' if histnorm_checkbox else None
+        histfunc = 'avg' if not histnorm else None
+        barmode = 'relative' if barmode_checkbox else 'group'
+        if submitted:
+            # st.write(col3_team)
+            df = agg(nba_graph, ['present_teams'])
+            # st.write(df)
+            df = df[df['present_teams'].isin(col3_team)]
+            # st.write(df)
+            fig = px.histogram(df, col3_x, col3_y, color='present_teams', histfunc=histfunc, histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict, title="", log_y=logy)
+            fig.update_traces(marker_line_width=1)
+            col4.plotly_chart(fig)
+    
+    # Optional TODO: Facet Plots
+
 
 # Analysis
 if s == "Analysis of GOAT by stats for the ten most popular players":
@@ -1460,18 +1527,237 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
 if s == "Analysis of the NBA Championship teams in iconic seasons":
     st.title("Analysis of the NBA Championship teams in iconic seasons (eg: 1995 Bulls, 1986 Celtics, etc.)")
 
+    # (Re) Create the dataset with minor adujustments
+    ana_df = player_totals.copy()
+    ana_df['off_totals'] = ana_df['pts'] + ana_df['ast'] + ana_df['orb']
+    ana_df['off_per_game'] = ana_df['ppg'] + ana_df['apg'] + ana_df['orpg']
+    ana_df['def_totals'] = ana_df['stl'] + ana_df['blk'] + ana_df['drb']
+    ana_df['def_per_game'] = ana_df['spg'] + ana_df['bpg']+ ana_df['drpg']
+    ana_df['comb_totals'] = ana_df['off_totals'] + ana_df['def_totals']
+    ana_df['comb_per_game'] = ana_df['off_per_game'] + ana_df['def_per_game']
+    ana_var_dict = {
+        'off_totals':'Offensive Totals',
+        'off_per_game':"Offense Per Game",
+        'def_totals':'Defensive Totals',
+        'def_per_game':'Defense Per Game',
+        'comb_totals':'Combined Totals',
+        'comb_per_game':'Combined Per Game'
+    }
+    pretty_dict = ana_var_dict.update(num_dict)
+
+    st.subheader("1. 1996 Bulls")
+    bulls_96 = ana_df.copy()
+    bulls_96 = bulls_96[bulls_96['season'] == 1996]
+    bulls_96 = bulls_96[bulls_96['tm'] == 'CHI'].reset_index(drop=True)
+    # st.write(bulls_95)
+    # st.write(bulls_95[bulls_95['player'] == 'Michael Jordan'])
+    bulls, bulls2 = st.columns([6,10])
+    ag = px.bar(bulls_96, 'player', 'per', 'ancient_pos', hover_data=['pts', 'ast', 'ovr'], height=800, width=1000)
+    ag.update_layout(yaxis=dict(showticklabels=False))
+    ag.update_yaxes(title='Player Efficiency Ratings of This Season')
+    ag.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>', outsidetextfont_family='Times New Roman')
+    ag.update_layout(bargap=0.3)
+    ag.update_xaxes(categoryorder='total descending')
+    for trace in ag.data:
+        text_values = []
+        for i, value in enumerate(trace.y):
+            text_value = f'{value:.2f}'
+            text_values.append(text_value)
+        if trace.text is not None:
+            trace.text = text_values
+    bulls2.plotly_chart(ag)
+    bulls.markdown("Rodman, Pippen and MJ all ended up with a PER over 20, and MJ's PER is over 30!")
+
+    # st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
+
+    st.subheader("1986 Celtics")
+    celts_86 = ana_df.copy()
+    celts_86 = celts_86[celts_86['season'] == 1986]
+    celts_86 = celts_86[celts_86['tm'] == 'BOS']
+    celts, celts2 = st.columns([6,10])
+    ag2 = px.bar(celts_86, 'player', 'per', 'ancient_pos', hover_data=['pts', 'ast', 'ovr'], text_auto=True)
+    ag2.update_yaxes(title='Player Efficiency Ratings of This Season')
+    ag2.update_xaxes(categoryorder='total descending')
+    ag2.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    celts2.plotly_chart(ag2)
+    celts.markdown("Unsurprisingly, the only three players with a PER > 20 are the 'Big Three' of the time: Larry Bird, Robert Parish and Kevin McHale.")
+    celts.markdown("Undoubtly, Larry Bird is the absolute STAR on this team.")
+
+    st.subheader("3. 1987 Lakers")
+    lakers_87 = ana_df.copy()
+    lakers_87 = lakers_87[(lakers_87['season'] == 1987) & (lakers_87['tm'] == 'LAL')]
+    lakers, lakers2 = st.columns([6,10])
+    ag3 = px.bar(lakers_87, 'player', 'per', 'ancient_pos', hover_data=['pts', 'ast', 'ovr'], text_auto=True)
+    ag3.update_yaxes(title='Player Efficiency Ratings of This Season')
+    ag3.update_xaxes(categoryorder='total descending')
+    ag3.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    lakers2.plotly_chart(ag3)
+    lakers.markdown("Magic Johnson had a 35.5 PER this season, and this trio (Magic, Worthy, and Kareem) were also the only three players to have a PER > 20.")
+
+    st.subheader("4. 2008 Celtics")
+    celts_08 = ana_df.copy()
+    celts_08 = celts_08[(celts_08['season'] == 2008) & (celts_08['tm'] == 'BOS')]
+    celts3, celts4 = st.columns([6,10])
+    ag4 = px.bar(celts_08, 'player', 'per', 'ancient_pos', hover_data=['pts', 'ast', 'ovr'], text_auto=True)
+    ag4.update_yaxes(title='Player Efficiency Ratings of This Season')
+    ag4.update_xaxes(categoryorder='total descending')
+    ag4.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    celts4.plotly_chart(ag4)
+    celts3.markdown("Paul Pierce and Kevin Garnett both have a PER of over 22.")
+    celts3.markdown("And although it is said that Paul, Kevin and Ray make the trio up, it turns out that Ray's PER (17.5) is only 1 above that of Rajon Rondo's (16.1)")
+
+    st.subheader("5. 1983 76ers")
+    sixers_83 = ana_df.copy()
+    sixers_83 = sixers_83[(sixers_83['season'] == 1983) & (sixers_83['tm'] == 'PHI')]
+    sixers, sixers2 = st.columns([6,10])
+    ag5 = px.bar(sixers_83, 'player', 'per', 'ancient_pos', hover_data=['pts', 'ast', 'ovr'], text_auto=True)
+    ag5.update_yaxes(title='Player Efficiency Rating of This Season')
+    ag5.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    ag5.update_xaxes(categoryorder='total descending')
+    sixers2.plotly_chart(ag5)
+    sixers.markdown('Dr. J (Julius Erving) and Moses Malone both have their PER above 25, with Moses a stunning 33.5!')
+
+    st.subheader('6. 2001 Lakers')
+    lakers_01 = ana_df.copy()
+    lakers_01 = lakers_01[(lakers_01['season'] == 2001) & (lakers_01['tm'] == 'LAL')]
+    lakers3, lakers4 = st.columns([6,10])
+    ag6 = px.bar(lakers_01, 'player', 'per', 'ancient_pos', hover_data=['pts', 'ast', 'ovr'], text_auto=True)
+    ag6.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    ag6.update_yaxes(title='Player Efficiency Ratings of This Season')
+    ag6.update_xaxes(categoryorder='total descending')
+    lakers4.plotly_chart(ag6)
+    lakers3.markdown("Shaq ended up with a 33.9 PER and Kobe with a 28.5.")
+    lakers3.markdown("No other player had their PER above 15. (the closest was Derrick Fisher and Horace Grant, with 14.7 and 14.16 respectively)")
+
+    st.subheader('7. 2016 Cavs')
+    cavs_16 = ana_df.copy()
+    cavs_16 = cavs_16[(cavs_16['season'] == 2016) & (cavs_16['tm'] == 'CLE')]
+    cavs, cavs2 = st.columns([6,10])
+    ag8 = px.bar(cavs_16, 'player', 'per', 'ancient_pos', hover_data=['pts', 'ast', 'ovr'], text_auto=True)
+    ag8.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    ag8.update_yaxes(title='Player Efficiency Ratings of This Season')
+    ag8.update_xaxes(categoryorder='total descending')
+    cavs2.plotly_chart(ag8)
+    cavs.markdown("Only LeBron and Love's PER are above 20 (Erving's PER was 19.1)")
+
+    st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
+
+    champ_df = pd.concat([sixers_83, celts_86, lakers_87, bulls_96, lakers_01, celts_08, cavs_16], ignore_index=True)
+    champ_df['team_seas'] = champ_df['tm'] + ' ' + champ_df['season'].astype(str).str[2:]
+    champ_avg = champ_df.groupby(['team_seas'])[['per', 'pts', 'ast', 'ovr', 'trb']].mean().reset_index()
+    # st.write(champ_avg)
+    ag7 = px.bar(champ_avg, 'team_seas', 'per', 'team_seas', hover_data=['pts', 'ast', 'trb'], text_auto=True)
+    ag7.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    ag7.update_yaxes(title='Average Player Efficiency Ratings')
+    ag7.update_xaxes(categoryorder='total descending')
+    champ, champ2 = st.columns([6,10])
+    champ2.plotly_chart(ag7)
+
+    champ_df.loc[(champ_df['player'] == 'Ron Harper') & (champ_df['tm'] == 'CHI'), 'player'] = 'Ron Harper (Bulls)'
+    champ_df.loc[(champ_df['player'] == 'Ron Harper') & (champ_df['tm'] == 'LAL'), 'player'] = 'Ron Harper (Lakers)'
+
+    champ_compare = px.bar(champ_df, x='player', y='per', color='team_seas', facet_col='pos', height=1500, width=2000, facet_col_wrap=2, facet_col_spacing=0.02, facet_row_spacing=0.08, text_auto=True)
+    champ_compare.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    champ_compare.update_yaxes(showticklabels=True)
+    champ_compare.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
+    st.plotly_chart(champ_compare)
+    
+if s == 'Rivalry Team Comparison':
+    st.title("Rivalry Team Comparison")
+    st.header('We are analyzing some of the rivalry teams in some NBA Finals (eg: 2016 Warriors vs Cavs; 2001 76ers vs Lakers; etc.)')
+    st.markdown("We are comparing the PER of the players in these rival teams.")
+    st.text('\n')
+    # (Re (for the third time)) Create the dataset with minor adujustments
+    ana_df = player_totals.copy()
+    ana_df['off_totals'] = ana_df['pts'] + ana_df['ast'] + ana_df['orb']
+    ana_df['off_per_game'] = ana_df['ppg'] + ana_df['apg'] + ana_df['orpg']
+    ana_df['def_totals'] = ana_df['stl'] + ana_df['blk'] + ana_df['drb']
+    ana_df['def_per_game'] = ana_df['spg'] + ana_df['bpg']+ ana_df['drpg']
+    ana_df['comb_totals'] = ana_df['off_totals'] + ana_df['def_totals']
+    ana_df['comb_per_game'] = ana_df['off_per_game'] + ana_df['def_per_game']
+    ana_var_dict = {
+        'off_totals': 'Offensive Totals',
+        'off_per_game': "Offense Per Game",
+        'def_totals': 'Defensive Totals',
+        'def_per_game': 'Defense Per Game',
+        'comb_totals': 'Combined Totals',
+        'comb_per_game': 'Combined Per Game'
+    }
+    pretty_dict = ana_var_dict.update(num_dict)
+
+    st.subheader("1. 2016 Warriors vs Cavs")
+    wc, wc2 = st.columns([6,10])
+    war_cav = ana_df.copy()
+    war_cav = war_cav[(war_cav['season'] == 2016) & (war_cav['tm'].isin(['CLE', 'GSW']))]
+    war_cav['team'] = war_cav['tm'].map({'CLE': 'Cavs', 'GSW': 'Warriors'})
+    war_cav.loc[(war_cav['player'] == 'Anderson Varejão') & (war_cav['tm'] == 'CLE'), 'player'] = 'Anderson Varejão (Cavs)'
+    war_cav.loc[(war_cav['player'] == 'Anderson Varejão') & (war_cav['tm'] == 'GSW'), 'player'] = 'Anderson Varejão (Warriors)'
+    # st.write(war_cav)
+    war_cav_2016 = px.bar(war_cav, x='player', y='per', color='team', text_auto=True, height=800, width=1000)
+    war_cav_2016.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    war_cav_2016.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
+    wc2.plotly_chart(war_cav_2016)
+
+    st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
+
+    # 2001 76ers vs Lakers
+    st.subheader("2. 2001 76ers vs Lakers")
+    six_lal = ana_df.copy()
+    sl, sl2 = st.columns([6,10])
+    six_lal = six_lal[(six_lal['season'] == 2001) & (six_lal['tm'].isin(['PHI', 'LAL']))]
+    six_lal['team'] = six_lal['tm'].map({'PHI': '76ers', 'LAL': 'Lakers'})
+    # st.write(six_lal)
+    six_lal_2001 = px.bar(six_lal, x='player', y='per', color='team', text_auto=True, height=800, width=1000)
+    six_lal_2001.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    six_lal_2001.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
+    sl2.plotly_chart(six_lal_2001)
+
+    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+
+    # 2008 Celtics vs Lakers
+    st.subheader("3. 2008 Celtics vs Lakers")
+    cl_lal = ana_df.copy()
+    cl, cl2 = st.columns([6,10])
+    cl_lal = cl_lal[(cl_lal['season'] == 2008) & (cl_lal['tm'].isin(['BOS', 'LAL']))]
+    cl_lal['team'] = cl_lal['tm'].map({'BOS': 'Celtics', 'LAL': 'Lakers'})
+    # st.write(cl_lal)
+    cl_lal_2008 = px.bar(cl_lal, x='player', y='per', color='team', text_auto=True, height=800, width=1000)
+    cl_lal_2008.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    cl_lal_2008.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
+    cl2.plotly_chart(cl_lal_2008)
+    
+    st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
+
+    # 1984 Celtics vs Lakers
+    st.subheader("4. 1984 Celtics vs Lakers")
+    cl_lal2 = ana_df.copy()
+    cl3, cl4 = st.columns([6,10])
+    cl_lal2 = cl_lal2[(cl_lal2['season'] == 1984) & (cl_lal2['tm'].isin(['BOS', 'LAL']))]
+    cl_lal2['team'] = cl_lal2['tm'].map({'BOS': 'Celtics', 'LAL': 'Lakers'})
+    # st.write(cl_lal2)
+    cl_lal_1984 = px.bar(cl_lal2, x='player', y='per', color='team', text_auto=True, height=800, width=1000)
+    cl_lal_1984.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
+    cl_lal_1984.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
+    cl4.plotly_chart(cl_lal_1984)
+
+    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+
 # Conclusion
 if s == "Conclusion":
     st.title("Conclusion for the NBA GOAT debate")
-
-
+    st.markdown("We have analyzed the ten most popular NBA GOAT nominees, and the NBA Finals of some rivalry teams.")
+    st.markdown("In the first analysis section, I feel that it is safe to say that the NBA GOAT is LeBron James.") # TODO: Add why LBJ is GOAT
+    st.text("So, congratulations to LeBron James!", help='Also, Yay if u like LeBron, no boos if u prefer MJ or Kobe or any other player better! It always comes down to a personal choice!')
+    st.markdown("So in the second part, we looked at some of the iconic championship seasons as well as some of the most rival teams. (Including Lakers and Celtics)")
+    st.text("So, this marks the end of this project! I hope you enjoyed it! Thanks for reading! (Please star my Github Repo!)")
 
 
 # Bibliography
 if s == "Bibliography":
     st.title("Bibliography")
-    st.text("[1]https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats/versions/31")
-    st.text("[2]NBA Math: nbamath.com")
-    st.text("[3]HoopsHype: hoopshype.com")
-    st.text("[4]ESPN: espn.com")
-    st.text("[5]Sporting News: sportingnews.com")
+    st.text("[1]https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats/versions/40, DOA=2024/12/17", help='DOA (Date Of Access): Dec 17, 2024')
+    st.caption("Near the end of the casestudy, I updated my dataset from version 31 to version 40, the newest by my DOA.")
+    st.text("[2]NBA Math: https://www.nbamath.com")
+    st.text("[3]HoopsHype: https://www.hoopshype.com")
+    st.text("[4]ESPN: https://www.espn.com")
+    st.text("[5]Sporting News: https://www.sportingnews.com")
