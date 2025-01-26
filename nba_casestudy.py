@@ -12,7 +12,7 @@ import pandas as pd  # noqa: E402
 pcq = px.colors.qualitative
 pd.options.plotting.backend = "plotly"
 
-my_path = "D:\\Pyworks\\casestudy\\"
+my_path = ""
 
 # Read in the dataset
 player_totals = pd.read_csv(my_path + "Player Totals.csv")
