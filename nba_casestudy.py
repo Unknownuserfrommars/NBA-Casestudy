@@ -1,3 +1,7 @@
+
+# NBA Casestudy Python File
+# Version 6.0
+
 # Imports
 import streamlit as st
 from streamlit_option_menu import option_menu as menu
@@ -8,7 +12,7 @@ import pandas as pd  # noqa: E402
 pcq = px.colors.qualitative
 pd.options.plotting.backend = "plotly"
 
-my_path = ""
+my_path = "D:\\Pyworks\\casestudy\\"
 
 # Read in the dataset
 player_totals = pd.read_csv(my_path + "Player Totals.csv")
@@ -180,15 +184,15 @@ nba_graph['present_teams'] = player_totals['tm'].map(team_dict)
 
 # Define a `agg` function to aggregate data (will be used to aggregate data in later exploratory graphs)
 def agg(data_frame: pd.DataFrame, groupby_cols: list | str = None, mode: str = 'sum') -> pd.DataFrame:
-    '''
+    """
     Parameters:
     data_frame (`pd.DataFrame`)
-    groupby_cols (`list` of `str` or `str`): The columns to groupby. (If nothing entered, default columns will be 'player' and 'ancient_pos')
+    groupby_cols (`list` of `str` or `str`): The columns to pd.groupby(). (If nothing entered, default columns will be 'player' and 'ancient_pos')
     mode (`str`): Accepts 'sum' or 'mean'
 
     Returns:
     `pd.DataFrame`
-    '''
+    """
     assert mode in ['sum', 'mean'], "`mode` must be one of 'sum' or 'mean'"
     cols = groupby_cols if groupby_cols is not None else ['player', 'ancient_pos']
     nvar = np.setdiff1d(NVar, cols)
@@ -218,7 +222,7 @@ num_dict = {
     'pts': 'Points',
     'ast': 'Assists',
     'fg': 'Field Goals',
-    'fga': 'Field Goals Attemps',
+    'fga': 'Field Goals Attempts',
     'ft': 'Free Throws',
     'fta': 'Free Throw Attempts',
     'g': 'Games Played',
@@ -267,7 +271,7 @@ team_dict = {
     'MIA':"Miami Heat",
     'CHO':'Charlotte Hornets',
     'ORL':"Orlando Magic",
-    'MIN':'Minnesoda Timberwolves',
+    'MIN':'Minnesota Timberwolves',
     'MEM':'Memphis Grizzlies',
     "TOR":'Toronto Raptors',
     'NOP':"New Orleans Pelicans"
@@ -365,21 +369,21 @@ all_dict.update(cat_dict)
 # No more cleaning code after this line!
 # We will begin to code the things you will be seeing on the browser
 with st.sidebar:
-	s = menu(
-		menu_title = 'The Great Navigation Pane of All Time',
-		options = ['Abstract', 'Background Information', 'Data Cleaning','Finding the GOAT Player', 'Finding the GOAT Team', 'Analysis of GOAT by stats for the ten most popular players', 'Analysis of the NBA Championship teams in iconic seasons', 'Rivalry Team Comparison', 'Conclusion', 'Bibliography'],
-		menu_icon = 'house-door-fill',
-		icons = ['person-arms-up', 'basket', 'filetype-csv', 'search', 'microsoft-teams', 'key-fill', 'trophy-fill', 'flag', 'star-fill', 'list-ol'],
-		default_index = 0,
-		)
-
+    s = menu(
+        menu_title = 'The Great Navigation Pane of All Time',
+        options = ['Abstract', 'Background Information', 'Data Cleaning','Finding the GOAT Player', 'Analysis for some of the Greatest Teams of All Time', 'Analysis of GOAT by stats for the ten most popular players', 'Analysis of the NBA Championship teams in iconic seasons', 'Rivalry Team Comparison', 'Conclusion', 'Bibliography'],
+        menu_icon = 'house-door-fill',
+        icons = ['person-arms-up', 'basket', 'filetype-csv', 'search', 'microsoft-teams', 'key-fill', 'trophy-fill', 'flag', 'star-fill', 'list-ol'],
+        default_index = 0,
+        )
 
 if s == "Abstract":
     st.title("NBA GOAT Decision")
     st.markdown("The debate over who holds the title of the Greatest of All Time (GOAT) in the NBA is one of the most spirited conversations among basketball enthusiasts. From legendary feats to iconic moments, various factors contribute to the greatness of players. However, when the chatter clears and emotions settle, it's the cold, hard stats that offer an objective lens through which we can attempt to settle this debate.")
-    st.markdown("In this case study, we delve deep into the world of numbers to crown the NBA GOAT.<sup>2 3 4</sup> We'll explore an array of statistical categories, including scoring averages, assists, rebounds, and advanced metrics. By examining these figures, we aim to provide a comprehensive analysis that transcends personal bias and nostalgia.", unsafe_allow_html=True)
+    st.markdown("In this case study, we delve deep into the world of numbers to crown the NBA GOAT.<sup>2,3,4</sup> We'll explore an array of statistical categories, including scoring averages, assists, rebounds, and advanced metrics. By examining these figures, we aim to provide a comprehensive analysis that transcends personal bias and nostalgia.", unsafe_allow_html=True)
     st.markdown("Join us as we crunch the numbers, compare legends from different eras, and unveil who truly stands atop the NBA mountain based on their statistical dominance. Whether you're a fan of the flashy dunks, the clutch shots, or the all-around game, this case study promises to offer insights and revelations about the legends of the hardwood. Let's dive in and find out who the stats say is the ultimate GOAT!")
     st.markdown("This dataset is retrieved from Kaggle (https://www.kaggle.com/) <sup>1</sup>", unsafe_allow_html=True)
+    st.text("If you find and any bugs (or graphs not working as expected), please start a new ISSUE at the github repository.")
 
 if s == "Background Information":
     st.title("Background Info")
@@ -398,10 +402,10 @@ if s == "Background Information":
     st.markdown("<b>Stats Criteria</b>", unsafe_allow_html=True)
     st.markdown("To navigate the complexities of the GOAT debate, we will employ a range of statistical measures:")
     st.markdown("""
-                - Scoring: Points per game (PPG), total points, and scoring titles.
-                - Assists: Assists per game (APG), total assists, and assist titles.
-                - Rebounds: Rebounds per game (RPG), total rebounds, and rebounding titles.
-                - Advanced Metrics: An `ovr` (overall) score for each season based on the player's perfromances.
+                - Scoring: Points per game (`PPG`), total points, and scoring titles.
+                - Assists: Assists per game (`APG`), total assists, and assist titles.
+                - Rebounds: Rebounds per game (`RPG`), total rebounds, and rebounding titles.
+                - Advanced Metrics: An `ovr` (overall) score for each season based on the player's performances.
     """)
     st.markdown("<b>Context and Evolution of the Game</b>", unsafe_allow_html=True)
     st.markdown("""
@@ -511,7 +515,7 @@ if s == "Finding the GOAT Player":
         return f"ChoiceError: Sorry, for the y-axis column corresponding to the x-axis column \"{a}\", we only support the \"{b}\" column."
     
     def err (msg: str, icon: str = None):
-        '''
+        """
         Displays a streamlit error message, returns a `DeltaGenerator` object (`streamlit.error`)
 
         Parameters:
@@ -520,9 +524,9 @@ if s == "Finding the GOAT Player":
 
         Returns:
         `streamlit.error` (`DeltaGenerator`)
-        '''
-        Icon = "🚨" if not icon else icon
-        return st.error(msg, icon=Icon)
+        """
+        icon = "🚨" if not icon else icon
+        return st.error(msg, icon=icon)
 
     # Exploratory Analysis (Graphs)
     st.title("Exploratory Analysis")
@@ -530,11 +534,11 @@ if s == "Finding the GOAT Player":
 
 
 
-      #######################################################################################################################################################################
+#######################################################################################################################################################################
 
     st.subheader("Visualization of stats across players")
     col7, col8 = st.columns([2,5])
-    col7.markdown("Compare stats between the scatter plot and the histograms below")
+    col7.markdown("Compare stats between the scatter plot and the histograms below ↓")
 
     with st.form("Scatter"): # TODO: Sync with line 614
         col7_x_input = col7.selectbox("Select a numeric column for the x-axis values", num_dict.values(), key=25)
@@ -551,9 +555,9 @@ if s == "Finding the GOAT Player":
             fig.update_traces(marker_line_width=1)
             col8.plotly_chart(fig)
 
-        #####################################################################################################################################################################
+#####################################################################################################################################################################
 
-    st.subheader("Compare stats across players")
+    st.subheader("Compare stats across players ↓")
     col5, col6 = st.columns([2,5])
     col5.markdown(".") # TODO: Same as line 520
 
@@ -568,7 +572,7 @@ if s == "Finding the GOAT Player":
         barmode_checkbox = col5.checkbox("Click for a stack histogram chart", key=21)
         usr_sel_bin_num = col5.checkbox("Do you want to select the number of bins? (Default is 10)", key=22)
         logy = col5.checkbox("Do you want logy?", key=24)
-        bins = col5.slider("The amount of bins you want", 5, 35, step=1, key=1002) if usr_sel_bin_num else 10  # Might not work... we'll see
+        bins = col5.slider("The amount of bins you want", 5, 35, step=1, key=1002) if usr_sel_bin_num else 10
         histnorm = 'percent' if histnorm_checkbox else None
         histfunc = 'avg' if not histnorm else None
         barmode = 'relative' if barmode_checkbox else 'group'
@@ -579,7 +583,7 @@ if s == "Finding the GOAT Player":
             fig.update_traces(marker_line_width=1)
             col6.plotly_chart(fig)
 
-
+    st.subheader("Compare stats across players for different positions ↓")
     col1, col2 = st.columns([2,5])
     col1.markdown("The histograms show patterns of the players' stats across positions. If you think this is not straightforward, feel free to go back to the scatter plot above and find more.") 
 
@@ -608,9 +612,8 @@ if s == "Finding the GOAT Player":
             fig.update_traces(marker_line_width=1)
             col2.plotly_chart(fig)
 
-    ####
-    
-    st.subheader("Box Plot to compare stats for players across different seasons")
+    #####
+    st.subheader("Box Plot to compare stats for players across different seasons ↓")
     col13, col14 = st.columns([2,5])
     col13.markdown("This is a rather generic plot for showing patterns across stats. Some of the more detailed graphes will be shown (above/below).") # TODO: Describe what kind of info can you get from this
 
@@ -639,7 +642,7 @@ if s == "Finding the GOAT Player":
             col14.plotly_chart(fig)
 
     #####
-    st.subheader("Box Plot to compare stats for players across different teams")
+    st.subheader("Box Plot to compare stats for players across different teams ↓")
     col27, col28 = st.columns([2,5])
 
     with st.form('box2'):
@@ -666,13 +669,13 @@ if s == "Finding the GOAT Player":
         hahaha = st.radio("Do you want more box plots?", ['Yes'], key=1000000)
         hahahaha = st.form_submit_button("Produce more!!! CLICK ME CLICK ME!!!")
         if hahahaha:
-            st.write("Hmmm... Your keyboard seem's to have its own opinions... If this problem persists, please seek for professional help.")
+            st.write("Hmmm... Your keyboard seems to have its own opinions... If this problem persists, please seek for professional help.")
 
 
 
     #########################################################################################################################################################################
     
-    st.subheader("Histogram for comparing a player's points/assists across his age")
+    st.subheader("Histogram for comparing a player's points/assists across his age ↓")
     col21, col22 = st.columns([2,5])
 
     with st.form("hisotgram"):
@@ -701,8 +704,8 @@ if s == "Finding the GOAT Player":
     #########################################################################################################################################################################
         
     ### GENERAL STATS
-    st.subheader("Compare avg stats across players")
-    st.caption("We'll be using the average dataset for this one!")
+    st.subheader("Compare avg stats across players ↓")
+    st.caption("PS: We'll be using the average dataset for this one!")
     col9, col10 = st.columns([2,5])
     col9.markdown(".") # TODO: Same as line 520
 
@@ -731,7 +734,7 @@ if s == "Finding the GOAT Player":
     #####
 
     ########################################################################################################################################################################
-    # st.subheader("Box Plot to compare stats for players across different seasons")
+    # st.subheader("Box Plot to compare stats for players across different seasons ↓")
     # col13, col14 = st.columns([2,5])
 
     # with st.form("Boxplot"): # TODO: Sync with line 691
@@ -786,14 +789,14 @@ if s == "Finding the GOAT Player":
     #     hahaha = st.radio("Do you want more box plots?", ['Yes'], key=1000000)
     #     hahahaha = st.form_submit_button("Produce more!!! CLICK ME CLICK ME!!!")
     #     if hahahaha:
-    #         st.write("Hmmm... Your keyboard seem's to have its own opinions... If this problem persists, please seek for professional help.")
+    #         st.write("Hmmm... Your keyboard seems to have its own opinions... If this problem persists, please seek for professional help.")
 
     #########################################################################################################################################################################
-    st.subheader("Line plot for comparing stats across players")
+    st.subheader("Line plot for comparing stats across players ↓")
     col15, col16 = st.columns([2,5])
 
     with st.form("Line"): # TODO: Sync with Line 749
-        # TODO: Not DYNAMIC INPUT, use player exp. (Season 1, 2, ...) not year
+        # TODO: Not DYNAMIC INPUT, use player exp. (Season 1, 2, ...) not years
         col15_pos_input = col15.selectbox("Pick a position", ['Center', 'Forward', 'Guard'], key=57)
         if col15_pos_input == 'Center':
             valid = nba_graph[nba_graph['ancient_pos'].isin(['C', 'C-F'])]
@@ -816,7 +819,8 @@ if s == "Finding the GOAT Player":
             col16.plotly_chart(fig)
 
     #########################################################################################################################################################################
-    st.subheader("Sunburst Plot for comparing stats for teams and players")
+
+    st.subheader("Sunburst Plot for comparing stats for teams and players ↓")
     col17, col18 = st.columns([2,5])
     ### PLAYER-TEAM
     with st.form("Sunburst"):
@@ -931,17 +935,17 @@ if s == "Finding the GOAT Player":
     #########################################################################################################################################################################
     # TODO: Change ALL to LINE PLOTS!
     ### PLAYER-EXP (GOAT PLAYER)
-    st.subheader("Histogram for comparing a player's overall score across his age")
+    st.subheader("Histogram for comparing a player's overall score across his age ↓")
     col19, col20 = st.columns([2,5])
 
-    with st.form("Hisotgram"):
+    with st.form("Hisotgram......"):
         col19_player = col19.multiselect("Select some players:", nba_75, max_selections=10, key=97)
         # Keys 98 and 99 are reserved
         histnorm_checkbox = col19.checkbox("Click for a normalized histogram", key=100)
         barmode_checkbox = col19.checkbox("Click for a stack histogram chart", key=101)
         usr_sel_bin_num = col19.checkbox("Do you want to select the number of bins? (Default is 10)", key=102)
         logy = col19.checkbox("Do you want logy?", key=103)
-        mean_or_sum = col19.checkbox("Click if you want `sum`, default `mean`", key=104)
+        mean_or_sum = col19.checkbox("Click if you want `sum` (default is `mean`)", key=104)
         bins = col19.slider("The amount of bins you want", 5, 35, step=1, key=1007) if usr_sel_bin_num else 10  # Might not work... we'll see
         histnorm = 'percent' if histnorm_checkbox else None
         histfunc = 'avg' if not histnorm else None
@@ -950,7 +954,7 @@ if s == "Finding the GOAT Player":
         mean_sum = 'sum' if mean_or_sum else 'mean'
         if submitted:
             df = agg(nba_graph, ['age', 'player'], mean_sum)
-            fig = px.histogram(df[df['player'].isin(col19_player)], 'age', 'ovr', 'player', histnorm=histnorm, histfunc=histfunc, barmode=barmode, nbins=bins, log_y=logy, title='·')
+            fig = px.histogram(df[df['player'].isin(col19_player)], 'age', 'ovr', 'player', histnorm=histnorm, histfunc=histfunc, barmode=barmode, nbins=bins, log_y=logy, title='')
             fig.update_traces(marker_line_width=1)
             col20.plotly_chart(fig)
 
@@ -959,7 +963,7 @@ if s == "Finding the GOAT Player":
 
     #####
     ### PLAYER-EXP (GOAT PLAYER)
-    st.subheader("Histogram for comparing a player's 2-pointers/3-pointers made across his age")
+    st.subheader("Histogram for comparing a player's 2-pointers/3-pointers made across his age ↓")
     col23, col24 = st.columns([2,5])
     # Player vs x2p, x3p, color = age
     with st.form("Histogram:"):
@@ -988,11 +992,11 @@ if s == "Finding the GOAT Player":
 ###########################################
 
 
-if s == 'Finding the GOAT Team':
+if s == 'Analysis for some of the Greatest Teams of All Time':
     def a (graph_type: str) -> str:
         return f"Click to produce the {graph_type}."
     
-    st.subheader("Exploratory for comparing two teams in a season")
+    st.subheader("Exploratory for comparing two teams in a season ↓")
     ### GOAT TEAM
     col29, col30 = st.columns([4, 8])
     # st.text("You might ONLY see the multiselect box of the two teams. This is because the code uses an if statement to check the length of the selected list.", help='You may also see a \'Missing form submit button\' (or is it only ME from the pre-deploy page?), this is alright. You can see the button after 2 teams is selected.')
@@ -1018,12 +1022,14 @@ if s == 'Finding the GOAT Team':
                     fig.update_traces(textposition=textpos, texttemplate="<b>%{y:.2f}</b>")
                     fig.update_xaxes(categoryorder="total descending", matches=None, showticklabels=True, tickangle=45)
                     col30.plotly_chart(fig)
-            else: st.error(f"The selected teams ({team_1} and {team_2}) do not share any common seasons.")  # noqa: E701
-        else: st.error(f"One or both teams ({team_1} and {team_2}) do not exist in the dataset.") # noqa: E701
-        # else: st.info("Please select exactly 2 teams to proceed.") # noqa: E701
+            else:
+                st.error(f"The selected teams ({team_1} and {team_2}) do not share any common seasons.")  # noqa: E701
+        else:
+            st.error(f"One or both teams ({team_1} and {team_2}) do not exist in the dataset.") # noqa: E701
+        # else:
+        #   st.info("Please select exactly 2 teams to proceed.") # noqa: E701
 
-
-    st.subheader("Sunburst Plot for comparing stats for teams and seasons")
+    st.subheader("Sunburst Plot for comparing stats for teams and seasons ↓")
     col25, col26 = st.columns([2,5])
 
     with st.form("?"):
@@ -1043,7 +1049,7 @@ if s == 'Finding the GOAT Team':
             col26.plotly_chart(fig1)
 
 
-    st.subheader("Compare avg stats across teams")
+    st.subheader("Compare avg stats across teams ↓")
     st.caption("`graph_avg` will also be used for this one!")
     col11, col12 = st.columns([2,5])
 
@@ -1074,10 +1080,8 @@ if s == 'Finding the GOAT Team':
             fig.update_traces(marker_line_width=1)
             col12.plotly_chart(fig)
 
-        
-    
 
-    st.subheader("Histogram of comparing stats across different teams")
+    st.subheader("Histogram of comparing stats across different teams ↓")
     col3, col4 = st.columns([2,5])
     col3.markdown("") # TODO: Same as line 520
 
@@ -1109,13 +1113,12 @@ if s == 'Finding the GOAT Team':
     
     # Optional TODO: Facet Plots
 
-
 # Analysis
 if s == "Analysis of GOAT by stats for the ten most popular players":
     st.title("Analysis of GOAT by stats for the ten most popular players")
     st.subheader("We'll be foucsing on the analysis for the ten most popular GOAT nominees: Lebron James, Michael Jordan, Kobe Bryant, Steph Curry and Magic Johnson, and")
     st.subheader("Larry Bird, Kareem Abdul-Jabbar, Tracy McGrady, Bill Russell and Wilt Chamberlain.")
-    st.text("Note that because Bill Russell and Wilt Chamberlain are from the old days, their data are not included in the raw dataset.", help='Thanks')
+    st.text("Note that because Bill Russell and Wilt Chamberlain are from the old days (1960s), some of their data are not included in the original dataset.")
     
     # DataFrame Creation
     ana_df = player_totals.copy()
@@ -1161,14 +1164,15 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     )
     ana_long['meas'] = ana_long['stat_type'].replace(ana_var_dict)
 
+############
 
-    st.subheader("Analyzing Offensive stats:")
+    st.subheader("Analyzing Offensive stats ↓")
     st.markdown("We'll be looking at a facet plot with stats (per game also) first:")
     ac1, ac2 = st.columns([4,6])
     ac1.markdown("Here's the analysis for the ten players' offensive stats:")
-    ac1.markdown("We can clearly see that LeBron leads both the Totals and the Per Game chart BY A LOT")
+    ac1.markdown("We can clearly see that LeBron leads both the Totals and the Per Game chart <b>BY A LOT</b>", unsafe_allow_html=True)
     ac1.markdown("Tracy McGrady is the last all two charts.")
-    ac1.markdown("Interestingly, both of Jordan's score was less than Kobe. But he still ranked the 3rd")
+    ac1.markdown("Interestingly, both of Jordan's score was less than Kobe. But he still ranked the 3rd.")
     # af1 = go.Figure()
     # af1.add_trace(
     #     go.Bar(
@@ -1234,7 +1238,7 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     ac2.plotly_chart(af1)
     # st.write(ana_long.head())
 
-    st.subheader("Analyzing Defensive stats:")
+    st.subheader("Analyzing Defensive stats ↓")
     ac3, ac4 = st.columns([4,5])
     ac3.markdown("Here's the analysis for the ten players' defensive stats:")
     af2 = px.histogram(
@@ -1262,8 +1266,8 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     ac4.plotly_chart(af2)
     ac3.markdown("Unsurprisingly, Kareem leads the defensive stats on the Totals.")
     ac3.markdown("What IS surprising: LeBron narrowing Kareen by 5 in the Per Game!")
-    ac3.markdown("Not surprisingly, Steph Curry is thje lowest of all. (I mean, reasonable, considering he's not so tall and bad at defense)")
-    ac3.markdown("Also, MJ leads Kobe in Totals but got beaten by 2 in the Per Game")
+    ac3.markdown("Not surprisingly, Steph Curry is the lowest of all. (I mean, it is quite reasonable, considering the fact that he's not so tall and not so good at defense)")
+    ac3.markdown("Also, MJ leads Kobe in Totals but lost by 2 in the Per Game Stats.")
     # af2 = px.bar(
     #     ana_long[ana_long['cat'] == 'Defensive'],
     #     'player',
@@ -1275,7 +1279,8 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     # )
     # ac4.plotly_chart(af2)
 
-    st.subheader("Analyzing All (combined) stats:")
+    st.subheader("Analyzing all (combined) stats ↓")
+    # Combined = Offensive + Defensive
     ac5, ac6 = st.columns([4,5])
     ac5.markdown("Here's the analysis for the ten players' combined stats:")
     af3 = px.histogram(
@@ -1305,8 +1310,8 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     ac6.plotly_chart(af3)
     ac5.markdown("So, to sum it up:")
     ac5.markdown("LeBron, undoubtly, lands on 1st.")
-    ac5.markdown("Kobe beats MJ and secured himself 2nd place")
-    ac5.markdown("And here's the best part: Kareem beat MJ by 1.3k in the totals but lost to him by 19 in the Per Game (3rd, 4th decider)")
+    ac5.markdown("Kobe beats Jordan and secured himself a 2nd place.")
+    ac5.markdown("And here's the best part: Kareem beat Michael by 1.3k in the totals but lost to him by 19 in the Per Game (which turns out to be the 3rd, 4th decider)")
     # af3 = px.bar(
     #     ana_long[ana_long['cat'] == 'Combined'],
     #     'player',
@@ -1368,10 +1373,10 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     af5.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     ac8.plotly_chart(af5)
 
-    st.write("As we can see, LeBron James leads the raw stats for points and assists, and Kareem (no doubt), leads in the Offensive Rebounds.")
-    st.write("MJ leads the steals and Kareem leads the blocks and the Defensive Rebounds. (Reasonable, since he's the only center in this graph)")
+    st.write("As we can see, LeBron James leads the raw stats for points and assists, and Kareem, as it can be seen through the graph, leads in the Offensive Rebounds (ORB).")
+    st.write("MJ leads the steals and Kareem leads the blocks and the Defensive Rebounds (DRB). (Reasonable, since he's the only Center in this graph)")
     st.write("Overall (in this map), LeBron leads the offensive stats and Kareem leads the defensive stats (including offensive rebounds), with MJ a single lead in the steals.")
-    st.write("T-Mac is still the worst in offensive stats but he is better than Steph Curry in the rebounds and defensive stats")
+    st.write("T-Mac is still the worst in offensive stats but he is better than Steph Curry in the rebounds and defensive stats.")
 
     ac9, ac10 = st.columns([6,6])
     af6 = px.histogram(
@@ -1509,7 +1514,7 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     # ana_col5.markdown("\n")
     # ana_col5.markdown("We can see that Tracy leads this by 0.958, followed by Larry's 0.929.")
     # ana_col5.markdown("These players' Player Efficiency Ratings are highly correlated to their overall.")
-    # ana_col5.markdown("You may recall earlier (In the Data Cleaning section) how i did the overall calculations.")
+    # ana_col5.markdown("You may recall earlier (In the Data Cleaning section) how I did the overall calculations.")
     # ana_col5.markdown("NOTE: There are no stats for Wilt and Bill because some stats weren't being recorded at that time.")
     # ana_col5.markdown("\n")
     # ana_col5.markdown("\n")
@@ -1522,12 +1527,18 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     
     st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    st.text("From that, I think it's safe to say that LeBron James is the NBA GOAT in this analysis section.", help="Although, any disagreement is welcomed. But feel free to go look at the graphs yourselves!")
+    st.text("From that, I think it's safe to say that LeBron James is the NBA GOAT in this analysis section.", help="Although, any disagreement is okay. But feel free to go back and look at the graphs yourselves!")
+    st.markdown("Here's a detailed analysis:")
+    st.markdown("To begin, LBJ leads the Offensive stats (both the Totals and the Per Game chart)")
+    st.markdown("Second, LBJ is an excellent Defensive player. Those who have seen his most iconic plays must have been impressed by his defensive talents. Looking at the data, we can find him second in the Defensive Totals, and top in the Per Game.")
+    st.markdown("Focusing back on reality, he has 4 championship rings (including one when he beat the 73-9 \"Super Warriors\" in 2016). He is one of the few to have more than 3 rings.")
+    st.markdown("Furthermore, his 20-year long-lasting career makes him an icon in the three decades he played in.")
+    st.text("It is also worth noting that because of the lack of data, we cannot provide a further analysis of the Play-making data of these players. (But it is foreseeable that Magic and Bird will excel in these stats)")
 
 if s == "Analysis of the NBA Championship teams in iconic seasons":
     st.title("Analysis of the NBA Championship teams in iconic seasons (eg: 1995 Bulls, 1986 Celtics, etc.)")
 
-    # (Re) Create the dataset with minor adujustments
+    # (Re) Create the dataset with minor adjustments
     ana_df = player_totals.copy()
     ana_df['off_totals'] = ana_df['pts'] + ana_df['ast'] + ana_df['orb']
     ana_df['off_per_game'] = ana_df['ppg'] + ana_df['apg'] + ana_df['orpg']
@@ -1580,8 +1591,8 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     ag2.update_xaxes(categoryorder='total descending')
     ag2.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
     celts2.plotly_chart(ag2)
-    celts.markdown("Unsurprisingly, the only three players with a PER > 20 are the 'Big Three' of the time: Larry Bird, Robert Parish and Kevin McHale.")
-    celts.markdown("Undoubtly, Larry Bird is the absolute STAR on this team.")
+    celts.markdown("Unsurprisingly, the only three players with a PER greater than 20 are the 'Big Three' of the time: Larry Bird, Robert Parish and Kevin McHale.")
+    celts.markdown("Undoubtedly, Larry Bird is the absolute STAR on this team.")
 
     st.subheader("3. 1987 Lakers")
     lakers_87 = ana_df.copy()
@@ -1592,7 +1603,7 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     ag3.update_xaxes(categoryorder='total descending')
     ag3.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
     lakers2.plotly_chart(ag3)
-    lakers.markdown("Magic Johnson had a 35.5 PER this season, and this trio (Magic, Worthy, and Kareem) were also the only three players to have a PER > 20.")
+    lakers.markdown("Magic Johnson had a 35.5 PER this season, and this trio (Magic, James Worthy, and Kareem) were also the only three players to have a PER greater than 20 in the team.")
 
     st.subheader("4. 2008 Celtics")
     celts_08 = ana_df.copy()
@@ -1615,7 +1626,7 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     ag5.update_traces(textposition='outside', texttemplate='<b>%{y:.2f}</b>')
     ag5.update_xaxes(categoryorder='total descending')
     sixers2.plotly_chart(ag5)
-    sixers.markdown('Dr. J (Julius Erving) and Moses Malone both have their PER above 25, with Moses a stunning 33.5!')
+    sixers.markdown('Dr. J (Julius Erving) and Moses Malone both have their PER above 25, with the latter ending up with a stunning 33.5!')
 
     st.subheader('6. 2001 Lakers')
     lakers_01 = ana_df.copy()
@@ -1627,9 +1638,9 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     ag6.update_xaxes(categoryorder='total descending')
     lakers4.plotly_chart(ag6)
     lakers3.markdown("Shaq ended up with a 33.9 PER and Kobe with a 28.5.")
-    lakers3.markdown("No other player had their PER above 15. (the closest was Derrick Fisher and Horace Grant, with 14.7 and 14.16 respectively)")
+    lakers3.markdown("No other player had their PER above 15. (The closest to that was Derrick Fisher and Horace Grant, with 14.7 and 14.16 respectively)")
 
-    st.subheader('7. 2016 Cavs')
+    st.subheader('7. 2016 Cavaliers')
     cavs_16 = ana_df.copy()
     cavs_16 = cavs_16[(cavs_16['season'] == 2016) & (cavs_16['tm'] == 'CLE')]
     cavs, cavs2 = st.columns([6,10])
@@ -1638,7 +1649,7 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     ag8.update_yaxes(title='Player Efficiency Ratings of This Season')
     ag8.update_xaxes(categoryorder='total descending')
     cavs2.plotly_chart(ag8)
-    cavs.markdown("Only LeBron and Love's PER are above 20 (Erving's PER was 19.1)")
+    cavs.markdown("Only LeBron and Kevin Love's PER are above 20 (While Erving's was 19.1)")
 
     st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
 
@@ -1661,13 +1672,30 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     champ_compare.update_yaxes(showticklabels=True)
     champ_compare.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     st.plotly_chart(champ_compare)
+
+    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+    st.markdown("A SMALL CONCLUSION ↓")
+    st.text("In the individual PER ratings, Magic Johnson stands out with his 35.54.")
+    st.text("And as for the average PER, here is a table of the teams and their averaging PER:")
+    st.text("""
+    season + team name  | average PER (4 d.p.)
+    --------------------|---------------------------------
+    1996 Bulls          | 10.6553
+    1986 Celtics        | 12.8308
+    1987 Lakers         | 13.8000
+    2008 Celtics        | 10.7387
+    1983 76ers          | 12.5286
+    2001 Lakers         | 11.0073
+    2016 Cavaliers      | 10.2206
+    """)
+    st.text("The 1987 Lakers somehow leads the average PER (Probably because of Magic).")
     
-if s == 'Rivalry Team Comparison':
-    st.title("Rivalry Team Comparison")
+if s == 'Rivalry Team Comparisons':
+    st.title("Rivalry Team Comparisons")
     st.header('We are analyzing some of the rivalry teams in some NBA Finals (eg: 2016 Warriors vs Cavs; 2001 76ers vs Lakers; etc.)')
     st.markdown("We are comparing the PER of the players in these rival teams.")
     st.text('\n')
-    # (Re (for the third time)) Create the dataset with minor adujustments
+    # (For the third time) Create the dataset (with minor adjustments)
     ana_df = player_totals.copy()
     ana_df['off_totals'] = ana_df['pts'] + ana_df['ast'] + ana_df['orb']
     ana_df['off_per_game'] = ana_df['ppg'] + ana_df['apg'] + ana_df['orpg']
@@ -1685,12 +1713,12 @@ if s == 'Rivalry Team Comparison':
     }
     pretty_dict = ana_var_dict.update(num_dict)
 
-    st.subheader("1. 2016 Warriors vs Cavs")
+    st.subheader("1. 2016 Warriors vs Cavaliers")
     wc, wc2 = st.columns([6,10])
     war_cav = ana_df.copy()
     war_cav = war_cav[(war_cav['season'] == 2016) & (war_cav['tm'].isin(['CLE', 'GSW']))]
-    war_cav['team'] = war_cav['tm'].map({'CLE': 'Cavs', 'GSW': 'Warriors'})
-    war_cav.loc[(war_cav['player'] == 'Anderson Varejão') & (war_cav['tm'] == 'CLE'), 'player'] = 'Anderson Varejão (Cavs)'
+    war_cav['team'] = war_cav['tm'].map({'CLE': 'Cavaliers', 'GSW': 'Warriors'})
+    war_cav.loc[(war_cav['player'] == 'Anderson Varejão') & (war_cav['tm'] == 'CLE'), 'player'] = 'Anderson Varejão (Cavaliers)'
     war_cav.loc[(war_cav['player'] == 'Anderson Varejão') & (war_cav['tm'] == 'GSW'), 'player'] = 'Anderson Varejão (Warriors)'
     # st.write(war_cav)
     war_cav_2016 = px.bar(war_cav, x='player', y='per', color='team', text_auto=True, height=800, width=1000)
@@ -1698,7 +1726,7 @@ if s == 'Rivalry Team Comparison':
     war_cav_2016.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     wc2.plotly_chart(war_cav_2016)
 
-    st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
+    st.html("<hr style=\"height: 5px; background-color: red;\" />")
 
     # 2001 76ers vs Lakers
     st.subheader("2. 2001 76ers vs Lakers")
@@ -1726,7 +1754,7 @@ if s == 'Rivalry Team Comparison':
     cl_lal_2008.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     cl2.plotly_chart(cl_lal_2008)
     
-    st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
+    st.html("<hr style=\"height: 5px; background-color: red;\" />")
 
     # 1984 Celtics vs Lakers
     st.subheader("4. 1984 Celtics vs Lakers")
@@ -1744,19 +1772,20 @@ if s == 'Rivalry Team Comparison':
 
 # Conclusion
 if s == "Conclusion":
-    st.title("Conclusion for the NBA GOAT debate")
+    st.title("<b>THE FINAL Conclusion</b> for the NBA GOAT debate of this case study", unsafe_allow_html=True)
     st.markdown("We have analyzed the ten most popular NBA GOAT nominees, and the NBA Finals of some rivalry teams.")
     st.markdown("In the first analysis section, I feel that it is safe to say that the NBA GOAT is LeBron James.") # TODO: Add why LBJ is GOAT
-    st.text("So, congratulations to LeBron James!", help='Also, Yay if u like LeBron, no boos if u prefer MJ or Kobe or any other player better! It always comes down to a personal choice!')
-    st.markdown("So in the second part, we looked at some of the iconic championship seasons as well as some of the most rival teams. (Including Lakers and Celtics)")
-    st.text("So, this marks the end of this project! I hope you enjoyed it! Thanks for reading! (Please star my Github Repo!)")
+    st.markdown("LeBron leads almost all the stats shown visually.")
+    st.text("So, congratulations to LeBron James!", help='Also, Yay if you like LeBron, no boos if u prefer MJ or Kobe or any other player better! It always comes down to a personal choice!')
+    st.markdown("And in the second part, we looked at some of the iconic championship seasons as well as some of the rivalry teams. (Including the long-lasting Lakers-Celtics Rivalry)")
+    st.text("So, this marks the end of this project! I hope you enjoyed it! Thanks for reading!", help="Also, don't forget to star my Github repo!")
 
 
 # Bibliography
 if s == "Bibliography":
     st.title("Bibliography")
     st.text("[1]https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats/versions/40, DOA=2024/12/17", help='DOA (Date Of Access): Dec 17, 2024')
-    st.caption("Near the end of the casestudy, I updated my dataset from version 31 to version 40, the newest by my DOA.")
+    st.caption("Near the end of the case study, I updated my dataset from version 31 to version 40, the newest by my DOA.")
     st.text("[2]NBA Math: https://www.nbamath.com")
     st.text("[3]HoopsHype: https://www.hoopshype.com")
     st.text("[4]ESPN: https://www.espn.com")
