@@ -13,7 +13,7 @@ import pandas as pd  # type: ignore # noqa: E402
 pcq = px.colors.qualitative
 pd.options.plotting.backend = "plotly"
 
-my_path = ""
+my_path = "D:\\Pyworks\\casestudy\\"
 
 # Read in the dataset
 player_totals = pd.read_csv(my_path + "Player Totals.csv")
@@ -1368,7 +1368,7 @@ if s == 'Rivalry Team Comparisons':
     war_cav_2016.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     wc2.plotly_chart(war_cav_2016)
 
-    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+    # st.html("<hr style=\"height: 5px; background-color: red;\" />")
 
     # 2001 76ers vs Lakers
     st.subheader("2. 2001 76ers vs Lakers")
@@ -1382,7 +1382,7 @@ if s == 'Rivalry Team Comparisons':
     six_lal_2001.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     sl2.plotly_chart(six_lal_2001)
 
-    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+    #st.html("<hr style=\"height: 5px; background-color: red;\" />")
 
     # 2008 Celtics vs Lakers
     st.subheader("3. 2008 Celtics vs Lakers")
@@ -1396,7 +1396,7 @@ if s == 'Rivalry Team Comparisons':
     cl_lal_2008.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     cl2.plotly_chart(cl_lal_2008)
     
-    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+    #st.html("<hr style=\"height: 5px; background-color: red;\" />")
 
     # 1984 Celtics vs Lakers
     st.subheader("4. 1984 Celtics vs Lakers")
@@ -1410,7 +1410,7 @@ if s == 'Rivalry Team Comparisons':
     cl_lal_1984.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     cl4.plotly_chart(cl_lal_1984)
 
-    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+    #st.html("<hr style=\"height: 5px; background-color: red;\" />")
 
 # Conclusion
 if s == "Conclusion":
