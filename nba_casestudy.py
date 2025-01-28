@@ -1,6 +1,6 @@
 
 # NBA Casestudy Python File
-# Version 7.3
+# Version 7.4
 # Github Released
 
 # Imports
@@ -1414,7 +1414,7 @@ if s == 'Rivalry Team Comparison':
 
 # Conclusion
 if s == "Conclusion":
-    st.title("<b>THE FINAL Conclusion</b> for the NBA GOAT debate of this case study", unsafe_allow_html=True)
+    st.title("THE FINAL Conclusion for the NBA GOAT debate of this case study")
     st.markdown("We have analyzed the ten most popular NBA GOAT nominees, and the NBA Finals of some rivalry teams.")
     st.markdown("In the first analysis section, I feel that it is safe to say that the NBA GOAT is LeBron James.") # TODO: Add why LBJ is GOAT
     st.markdown("LeBron leads almost all the stats shown visually.")
