@@ -1,18 +1,19 @@
 
 # NBA Casestudy Python File
 # Version 6.0
+# Github Released
 
 # Imports
-import streamlit as st
-from streamlit_option_menu import option_menu as menu
+import streamlit as st # type: ignore
+from streamlit_option_menu import option_menu as menu # type: ignore
 st.set_page_config(layout="wide")
-import numpy as np  # noqa: E402
-import plotly.express as px  # noqa: E402
-import pandas as pd  # noqa: E402
+import numpy as np  # type: ignore # noqa: E402
+import plotly.express as px  # type: ignore # noqa: E402
+import pandas as pd  # type: ignore # noqa: E402
 pcq = px.colors.qualitative
 pd.options.plotting.backend = "plotly"
 
-my_path = ""
+my_path = "D:\\Pyworks\\casestudy\\"
 
 # Read in the dataset
 player_totals = pd.read_csv(my_path + "Player Totals.csv")
@@ -202,18 +203,6 @@ def agg(data_frame: pd.DataFrame, groupby_cols: list | str = None, mode: str = '
         return m.groupby(cols)[nvar].sum().reset_index()
     elif mode == 'mean':
         return m.groupby(cols)[nvar].mean().reset_index()
-    # else:
-    #     pass  # Optional TODO: add more
-
-# Some tests
-# df = agg(nba_graph, ['tm', 'ancient_pos', 'player'])
-# print(df.columns)
-
-# TEST
-# graph_totals
-# graph_totals.columns
-# graph_totals.dtypes
-# graph_avg
 
 # Dictionaries
 num_dict = {
@@ -483,29 +472,7 @@ if s == "Data Cleaning":
 
 # Exploratory Graphs
 if s == "Finding the GOAT Player":
-    # Template:
-
-    # st.subheader("A title")
-    # col, col= st.columns([x,y])
-    # # Remind: odd cols: input widgets; even cols: plotly plots
-    # col.markdown("Description of what people can find using this")
-
-    # with st.form("Whatever"):
-    #    # Use input widgets... (Selectbox, checkbox, radio, multi-select, etc.)   
-    #    submitted = st.form_submit_button("") 
-    #    if submitted:
-    #        fig = px.whatever_graph_type(**kwargs)
-    #        # Whatever updates
-    #        col.plotly_chart(fig)   
-
-    # Key Numbering System:
-    # Normal: from 1 to 999 or from 1601 to 999999 or from 1000010 to whatever
-    # sliders: from 1000 to 1500
-    # radio: from 1501 to 1550
-    # Different multiselect choices basing on radio (or checkbox or whatever): from 1551 to 1600
-    # Weird Keys: 1000000 to 1000009
-
-    # Define some functions (and a list)
+    
     tochoose = ["Team-Position", "Position-Team", "Player-Position", "Player-Team"]
 
     def a (graph_type: str) -> str:
@@ -528,11 +495,8 @@ if s == "Finding the GOAT Player":
         icon = "🚨" if not icon else icon
         return st.error(msg, icon=icon)
 
-    # Exploratory Analysis (Graphs)
     st.title("Exploratory Analysis")
     st.caption("This is where the fun part comes in :)")
-
-
 
 #######################################################################################################################################################################
 
@@ -731,67 +695,8 @@ if s == "Finding the GOAT Player":
             fig.update_traces(marker_line_width=1)
             col10.plotly_chart(fig)
 
-    #####
-
     ########################################################################################################################################################################
-    # st.subheader("Box Plot to compare stats for players across different seasons ↓")
-    # col13, col14 = st.columns([2,5])
 
-    # with st.form("Boxplot"): # TODO: Sync with line 691
-    #     df = nba_graph.copy()
-    #     col13_season = col13.multiselect("Select some seasons", df['season'].unique(), key=49, max_selections=10)
-    #     col13_y_input = col13.selectbox("Select a numeric column for the y-axis values", num_dict.values(), key=50)
-    #     col13_y = [bname for bname, pname in num_dict.items() if pname == col13_y_input][0]
-    #     # Key 51 is reserved
-    #     col13_radio_choice = col13.multiselect("Select some players:", nba_75, key=1551, max_selections=20)
-    #     submitted = st.form_submit_button(a("Box plot"))
-    #     # Key 52 is reserved
-    #     boxmode_checkbox = col13.checkbox("Click for a different boxmode", key=53)
-    #     # Keys 54,55 are ALSO reserved
-    #     logy = col13.checkbox("Do you want logy?", key=56)
-    #     # Key 1006 ALSO reserved
-    #     boxmode = 'relative' if barmode_checkbox else 'group'
-    #     if submitted:
-    #         choice = 'player'
-    #         # st.write(df.columns)
-    #         df = df[df[choice].isin(col13_radio_choice)]
-    #         df = df[df['season'].isin(col13_season)]
-    #         # st.write(df)
-    #         fig = px.box(df, 'season', col13_y, color=choice, hover_data=['season'], boxmode=boxmode, log_y=logy, height=800, width=600, title="", labels=all_dict.values(), points='all', hover_name=choice)
-    #         fig.update_traces(marker_line_width=1)
-    #         col14.plotly_chart(fig)
-
-    # #####
-    # st.subheader("Box Plot to compare stats for players across different teams")
-    # col27, col28 = st.columns([2,5])
-
-    # with st.form('box2'):
-    #     df = nba_graph.copy()
-    #     col27_team_input = col27.multiselect("Select some teams", df['tm'].unique(), key=129, max_selections=10)
-    #     col27_y_input = col27.selectbox("select a numeric column for the y-axis values", num_dict.values(), key=130)
-    #     col27_player = col27.multiselect("Select some players", nba_75, max_selections=10, key=133)
-    #     col27_team = [bname for bname, pname in team_dict.items() if pname in col27_team_input]
-    #     col27_y = [bname for bname, pname in num_dict.items() if pname == col27_y_input][0]
-    #     submitted = st.form_submit_button(a("Box Plot"))
-    #     boxmode_checkbox = col27.checkbox("Click for a different boxmode", key=131)
-    #     logy = col27.checkbox("Do you want logy?", key=132)
-    #     boxmode = 'relative' if boxmode_checkbox else 'group'
-    #     if submitted:
-    #         df = df[df['tm'].isin(col27_team)]
-    #         df = df[df['player'].isin(col27_player)]
-    #         fig = px.box(df, 'tm', col27_y, color='player', hover_data=['pts', 'ast', 'player', 'season'], boxmode=boxmode, log_y=logy, title="", labels=all_dict.values(), points='all', hover_name='player')
-    #         fig.update_traces(marker_line_width=1)
-    #         col28.plotly_chart(fig)
-
-    # st.markdown("<hr>", unsafe_allow_html=True)
-
-    # with st.form("Hahaha"):
-    #     hahaha = st.radio("Do you want more box plots?", ['Yes'], key=1000000)
-    #     hahahaha = st.form_submit_button("Produce more!!! CLICK ME CLICK ME!!!")
-    #     if hahahaha:
-    #         st.write("Hmmm... Your keyboard seems to have its own opinions... If this problem persists, please seek for professional help.")
-
-    #########################################################################################################################################################################
     st.subheader("Line plot for comparing stats across players ↓")
     col15, col16 = st.columns([2,5])
 
@@ -820,7 +725,7 @@ if s == "Finding the GOAT Player":
 
     #########################################################################################################################################################################
 
-    st.subheader("Sunburst Plot for comparing stats for teams and players ↓")
+    st.subheader("Sunburst Plot for comparing stats across teams and players ↓")
     col17, col18 = st.columns([2,5])
     ### PLAYER-TEAM
     with st.form("Sunburst"):
@@ -835,110 +740,19 @@ if s == "Finding the GOAT Player":
         col17_team_input = col17.multiselect("Select some teams:", df1['tm'].unique(), key=65, max_selections=10)
         df1 = df1[df1['tm'].isin(col17_team_input)]
         col17_pos_input = col17.multiselect("Select some positions:", df1['ancient_pos'].unique(), key=66)
-        # Key 67 is reserved
-        # col17_team = [bname for bname, pname in team_dict.items() if pname in col17_team_input]
-        # col17_pos = [bname for bname, pname in pos_dict.items() if pname in col17_pos_input]
         bool_idx = (df1['tm'].isin(col17_team_input)) & (df1['ancient_pos'].isin(col17_pos_input))
         sppath = ['tm', 'ancient_pos', 'player']
-        # elif choice == "Position-Team":  # Pos-Team
-        #     df1 = agg(nba_graph, ['ancient_pos', 'tm'])
-        #     col17_pos_input = col17.multiselect("select some positions:", pos_dict.values(), key=68)
-        #     col17_team_input = col17.multiselect("Select some teams:", team_dict.values(), key=69, max_selections=10)
-        #     # Key 70 is reserved
-        #     col17_pos = [bname for bname,pname in pos_dict.items() if pname == col17_pos_input]
-        #     col17_team = [bname for bname, pname in team_dict.items() if pname == col17_team_input]
-        #     bool_idx = (df1['ancient_pos'].isin(col17_pos)) & (df1['tm'].isin(col17_team))
-        #     sppath = ['ancient_pos', 'tm']
-        # elif choice == "Player-Position":  # Player-Pos
-        #     df1 = agg(nba_graph, ['player', 'ancient_pos'])
-        #     col17_player = col17.multiselect("Select some players:", nba_75, key=71, max_selections=10)
-        #     col17_pos_input = col17.multiselect("Select some positions:", pos_dict.values(), key=72)
-        #     # Key 73 is reserved
-        #     col17_pos = [bname for bname, pname in pos_dict.items() if pname == col17_pos_input]
-        #     bool_idx = (df1['player'].isin(col17_player)) & (df1['ancient_pos'].isin(col17_pos))
-        #     sppath = ['player', 'ancient_pos']
-        # else:  # Player-Team
-        #     df1 = agg(nba_graph, ['player', 'tm'])
-        #     col17_player = col17.multiselect("Select some players:", nba_75, key=71, max_selections=10)
-        #     col17_team_input = col17.multiselect("Select some teams:", team_dict.values(), key=72, max_selections=10)
-        #     # Key 73 is reserved
-        #     col17_team = [bname for bname, pname in team_dict.items() if pname == col17_team_input]
-        #     bool_idx = (df1['player'].isin(col17_player)) & (df1['tm'].isin(col17_team))
-        #     sppath = ['player', 'tm']
         submitted = st.form_submit_button(a("Sunburst Plot"))
-        if submitted: 
-            # # Some tests during debugging. There happens to be a major bug here.
-            # st.dataframe(df1)
-            # st.dataframe(df1[(df1['tm'].isin(col17_team)) & (df1['ancient_pos'].isin(col17_pos))])
-            # st.write(bool_idx)
-            # st.write(col17_team)
-            # st.write(col17_pos)
-            # st.write(col17_team_input)
-            # st.write(col17_pos_input)
+        if submitted:
             fig1 = px.sunburst(df1[bool_idx], values = numcol, path=sppath, height=800, width=600)
             col18.plotly_chart(fig1)
-            # elif choice == "Position-Team":
-            #     fig = px.sunburst(df, col17_team, col17_pos)
-            #     col18.plotly_chart(fig)
-            # elif choice == "Player-Position":
-            #     fig = px.sunburst(df, col17_player, col17_pos)
-            #     col18.plotly_chart(fig)
-            # else:
-            #     fig = px.sunburst(df, col17_player, col17_team)
-            #     col18.plotly_chart(fig)
-        # Keys 74~96 are reserved
-
-    # # Alternative option: Treemap
-    # with st.form("Treemap"):
-    #     choice = col17.selectbox("Select the columns you want to show in this graph: (Format: inner_circle-outer_circle)", tochoose, key=1602)
-    #     if choice == tochoose[0]:
-    #         col17_team_input = col17.multiselect("Select some teams:", team_dict.values(), key=74, max_selections=10)
-    #         col17_pos_input = col17.multiselect("Select some positions:", pos_dict.values(), key=75)
-    #         # Key 76 is reserved
-    #         col17_team = [bname for bname, pname in team_dict.items() if pname == col17_team_input]
-    #         col17_pos = [bname for bname, pname in pos_dict.items() if pname == col17_pos_input]
-    #     elif choice == tochoose[1]:
-    #         col17_pos_input = col17.multiselect("select some positions:", pos_dict.values(), key=77)
-    #         col17_team_input = col17.multiselect("Select some teams:", team_dict.values(), key=78, max_selections=10)
-    #         # Key 79 is reserved
-    #         col17_pos = [bname for bname,pname in pos_dict.items() if pname == col17_pos_input]
-    #         col17_team = [bname for bname, pname in team_dict.items() if pname == col17_team_input]
-    #     elif choice == tochoose[2]:
-    #         col17_player = col17.multiselect("Select some players:", nba_75, key=80, max_selections=10)
-    #         col17_pos_input = col17.multiselect("Select some positions:", pos_dict.values(), key=81)
-    #         # Key 82 is reserved
-    #         col17_pos = [bname for bname, pname in pos_dict.items() if pname == col17_pos_input]
-    #     else:
-    #         col17_player = col17.multiselect("Select some players:", nba_75, key=83, max_selections=10)
-    #         col17_team_input = col17.multiselect("Select some teams:", team_dict.values(), key=84, max_selections=10)
-    #      # Key 73 is reserved
-    #         col17_team = [bname for bname, pname in team_dict.items() if pname == col17_team_input]
-    #     submitted = st.form_submit_button(a("Treemap"))
-    #     if submitted:
-    #         df = agg(nba_graph)
-    #         if choice == tochoose[0]:
-    #             fig = px.treemap(df, col17_team, col17_pos)
-    #         elif choice == tochoose[1]:
-    #             fig = px.treemap(df, col17_pos, col17_team)
-    #             col18.plotly_chart(fig)
-    #         elif choice == tochoose[2]:
-    #             fig = px.treemap(df, col17_player, col17_pos)
-    #             col18.plotly_chart(fig)
-    #         else:
-    #             fig = px.treemap(df, col17_player, col17_team)
-    #             col18.plotly_chart(fig)
-
-    #####
-    ### TEAMS-SEASONS (GOAT TEAM)
-
-
+           
     #########################################################################################################################################################################
     # TODO: Change ALL to LINE PLOTS!
-    ### PLAYER-EXP (GOAT PLAYER)
     st.subheader("Histogram for comparing a player's overall score across his age ↓")
     col19, col20 = st.columns([2,5])
 
-    with st.form("Hisotgram......"):
+    with st.form("Histogram1......"):
         col19_player = col19.multiselect("Select some players:", nba_75, max_selections=10, key=97)
         # Keys 98 and 99 are reserved
         histnorm_checkbox = col19.checkbox("Click for a normalized histogram", key=100)
@@ -959,8 +773,6 @@ if s == "Finding the GOAT Player":
             col20.plotly_chart(fig)
 
     #########################################################################################################################################################################
-
-
     #####
     ### PLAYER-EXP (GOAT PLAYER)
     st.subheader("Histogram for comparing a player's 2-pointers/3-pointers made across his age ↓")
@@ -986,9 +798,6 @@ if s == "Finding the GOAT Player":
             col24.plotly_chart(fig)
     
     #########################################################################################################################################################################
-
-
-
 ###########################################
 
 
@@ -1072,10 +881,6 @@ if s == 'Analysis for some of the Greatest Teams of All Time':
         if submitted:
             x11 = agg(nba_graph, ['player', 'ancient_pos', 'present_teams'], 'mean')
             x11 = x11[x11['present_teams'].isin(col11_team)]
-            # # Some TESTS during debugging
-            # col11.write(x11)
-            # col11.write(col11_team_input)
-            # col11.write(col11_team)
             fig = px.histogram(x11, col11_x, col11_y, color='present_teams', histfunc=histfunc, histnorm=histnorm, barmode=barmode, nbins=bins, labels=all_dict.values(), title="", log_y=logy)
             fig.update_traces(marker_line_width=1)
             col12.plotly_chart(fig)
@@ -1173,46 +978,6 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     ac1.markdown("We can clearly see that LeBron leads both the Totals and the Per Game chart <b>BY A LOT</b>", unsafe_allow_html=True)
     ac1.markdown("Tracy McGrady is the last all two charts.")
     ac1.markdown("Interestingly, both of Jordan's score was less than Kobe. But he still ranked the 3rd.")
-    # af1 = go.Figure()
-    # af1.add_trace(
-    #     go.Bar(
-    #         x=ana_df['player'], 
-    #         y=ana_df['off_totals'], 
-    #         name='Offensive Totals', 
-    #         xaxis='x1', 
-    #         yaxis='y1'
-    #     )
-    # )
-    # af1.add_trace(
-    #     go.Bar(
-    #         x=ana_df['player'], 
-    #         y=ana_df['off_per_game'], 
-    #         xaxis='x2',
-    #         yaxis='y2'
-    #     )
-    # )
-    # af1.update_layout(
-    #     title="Offensive Stats: Totals and Per Game", 
-    #     xaxis=dict(domain=[0, 0.45]), 
-    #     xaxis2=dict(domain=[0.55, 1]), 
-    #     yaxis=dict(title='Total Points', range=[0,65000]), 
-    #     yaxis2=dict(title='Points Per Game', range=[0,1000], anchor='x2'), 
-    #     barmode='group', 
-    #     showlegend=False, 
-    #     height=400
-    # )
-    # af1.add_annotation(
-    #     x=0.225, y=1.05, xref='paper', yref='paper', 
-    #     text='Offensive Totals', 
-    #     showarrow=False, 
-    #     font=dict(size=14)
-    # )
-    # af1.add_annotation(
-    #     x=0.775, y=1.05, xref='paper', yref='paper', 
-    #     text='Offense Per Game', 
-    #     showarrow=False, 
-    #     font=dict(size=14)
-    # )
     af1 = px.histogram(
         ana_long[ana_long['stat_type'].isin(off_list)], 
         'player', 
@@ -1236,7 +1001,6 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     af1.update_traces(textposition='outside', texttemplate='<b>%{y:.3s}</b>')
     af1.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     ac2.plotly_chart(af1)
-    # st.write(ana_long.head())
 
     st.subheader("Analyzing Defensive stats ↓")
     ac3, ac4 = st.columns([4,5])
@@ -1266,19 +1030,7 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     ac4.plotly_chart(af2)
     ac3.markdown("Unsurprisingly, Kareem leads the defensive stats on the Totals.")
     ac3.markdown("What IS surprising: LeBron narrowing Kareen by 5 in the Per Game!")
-    ac3.markdown("Not surprisingly, Steph Curry is the lowest of all. (I mean, it is quite reasonable, considering the fact that he's not so tall and not so good at defense)")
-    ac3.markdown("Also, MJ leads Kobe in Totals but lost by 2 in the Per Game Stats.")
-    # af2 = px.bar(
-    #     ana_long[ana_long['cat'] == 'Defensive'],
-    #     'player',
-    #     'value',
-    #     'meas',
-    #     facet_col='meas',
-    #     title='Defensive Stats: Totals and Per Game',
-    #     height=400
-    # )
-    # ac4.plotly_chart(af2)
-
+    ac3.markdown("Not surprisingly, Steph Curry is the lowest of all. (I mean, it is quite reasonable")
     st.subheader("Analyzing all (combined) stats ↓")
     # Combined = Offensive + Defensive
     ac5, ac6 = st.columns([4,5])
@@ -1312,16 +1064,6 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     ac5.markdown("LeBron, undoubtly, lands on 1st.")
     ac5.markdown("Kobe beats Jordan and secured himself a 2nd place.")
     ac5.markdown("And here's the best part: Kareem beat Michael by 1.3k in the totals but lost to him by 19 in the Per Game (which turns out to be the 3rd, 4th decider)")
-    # af3 = px.bar(
-    #     ana_long[ana_long['cat'] == 'Combined'],
-    #     'player',
-    #     'value',
-    #     'meas',
-    #     facet_col='meas',
-    #     title="Combined Stats: Totals and Per Game",
-    #     height=400
-    # )
-    # ac6.plotly_chart(af3)
 
     st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
 
@@ -1425,106 +1167,6 @@ if s == "Analysis of GOAT by stats for the ten most popular players":
     af7.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     ac10.plotly_chart(af7)
 
-    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # # with st.form("Analysis 2: PPG, APG, RPG vs players"):
-    # ana_col3, ana_col4 = st.columns([4,5])
-    # ana_col3.markdown("<b>In this graph, we are going to analyse the PPG (Points Per Game) and players</b>", unsafe_allow_html=True)
-    # ana_fig2 = px.box(ana_df, 'player', 'ppg', points='all', labels=all_dict.values(), title="", hover_data=['player', 'season', 'per', 'ovr', 'apg', 'rpg'])
-    # ana_fig2.update_traces(marker_line_width=1)
-    # ana_col4.plotly_chart(ana_fig2)
-
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("Again, the highest goes to Wilt, averaging over a stunning 50 pts in the 1962-63 NBA season.")
-    # ana_col3.markdown("The highest medium goes to Wilt again, with 31.82297.")
-    # ana_col3.markdown("Unsurprisingly, the lowest goes to T-Mac in his 2010-11 season (3.166667 ppg).")
-
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("<hr>", unsafe_allow_html=True)
-
-    # ana_col3.markdown("<i>Additionally, we are going to find the relationship between the APG and RPG against the players.</i>", unsafe_allow_html=True)
-    # ana_fig3 = px.box(ana_df, 'player', 'apg', points='all', labels=all_dict.values(), title="", hover_data=['player', 'season', 'ovr', 'per'])
-    # ana_fig3.update_traces(marker_line_width=1)
-    # ana_col4.plotly_chart(ana_fig3)
-
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("Not surprisingly, Magic Johnson leads the highest APG (and the highest medium) by 13.0597 and 11.91667 respectively.")
-    # ana_col3.markdown("And shockingly, the highest APG for Kobe Bryant (6.333) is smaller than that of Magic Johnson's lowest (6.875).")
-    # ana_col3.markdown("And unsurprisingly, the lowest APG goes to Tracy in (yep, you've guessed it, 2010-11 season), only avg 1 assists per game!")
-
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("<hr>", unsafe_allow_html=True)
-
-    # ana_col3.markdown("<i>And in this graph, we explore RPG against players</i>", unsafe_allow_html=True)
-    # ana_fig4 = px.box(ana_df, 'player', 'rpg', points='all', labels=all_dict.values(), title="", hover_data=['player', 'season', 'ovr', 'per', 'ppg'])
-    # ana_fig4.update_traces(marker_line_width=1)
-    # ana_col4.plotly_chart(ana_fig4)
-
-    # ana_col3.markdown("\n")
-    # ana_col3.markdown("\n")    
-    # ana_col3.markdown("We all know that Wilt and Bill are MONSTERS at rebounds, it seems that Wilt narrowly beats Bill. But we're not going to look at them for now.")
-    # ana_col3.markdown("Surprisingly, Magic Johnson also leads the highest RPG (9.268205), and that is in the 1982-1983 NBA season.")
-    # ana_col3.markdown("The highest medium goes to LBJ, with a 7.688889.")
-    # ana_col3.markdown("And another point worth noting: although Kobe is still the lowest on RPG (1.859155), Stephen Curry's RPG medium is actually about 0.4 lower than that of Kobe's.")
-
-    # st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
-
-    # # with st.form("Analysis 1: PER vs players"):
-    # ana_col1, ana_col2 = st.columns([4,5])
-    # ana_col1.markdown("<b>In this graph, we are going to analyse the PER (Player Efficiency Ratings) and players</b>", unsafe_allow_html=True)
-    # ana_fig1 = px.box(ana_df, 'player', 'per', points='all', labels=all_dict.values(), title="", hover_data=['player', 'season', 'per', 'ovr'])
-    # ana_fig1.update_traces(marker_line_width=1)
-    # ana_col2.plotly_chart(ana_fig1)
-
-    # ana_col1.markdown("\n")
-    # ana_col1.markdown("\n")
-    # ana_col1.markdown("From the chart, we can clearly see that MJ holds the most PER in a season (40.5679), in the 1989-1990 NBA season.")
-    # ana_col1.markdown("Surprisingly, the highest PER medium goes to Magic Johnson, with a 33.24051, narrowly beating LBJ and Michael.")
-    # ana_col1.markdown("The lowest PER in a season goes to T-Mac, with a 3 in the 2010 season.")
-
-    # st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
-
-    # # with st.form("Anaysis 3: Seasons-played vs PER/OVR corr"):
-    # ana_col5, ana_col6 = st.columns([4,5])
-    # ana_fig5 = px.histogram(ana_corr_df, 'Player Name', 'Correlation', color='Player Name', text_auto='.2f', title="Correlation of PER (Player Efficiency Ratings) and OVR (Overall)")
-    # ana_fig5.update_traces(marker_line_width=1, textposition='outside')
-    # ana_col6.plotly_chart(ana_fig5)
-    
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("We can see that Tracy leads this by 0.958, followed by Larry's 0.929.")
-    # ana_col5.markdown("These players' Player Efficiency Ratings are highly correlated to their overall.")
-    # ana_col5.markdown("You may recall earlier (In the Data Cleaning section) how I did the overall calculations.")
-    # ana_col5.markdown("NOTE: There are no stats for Wilt and Bill because some stats weren't being recorded at that time.")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    # ana_col5.markdown("\n")
-    
     st.markdown("<hr style=\"height: 5px; background-color: red;\" />", unsafe_allow_html=True)
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     st.text("From that, I think it's safe to say that LeBron James is the NBA GOAT in this analysis section.", help="Although, any disagreement is okay. But feel free to go back and look at the graphs yourselves!")
