@@ -1,6 +1,6 @@
 
 # NBA Casestudy Python File
-# Version 6.0
+# Version 7.3
 # Github Released
 
 # Imports
@@ -1332,8 +1332,8 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     """)
     st.text("The 1987 Lakers somehow leads the average PER (Probably because of Magic).")
     
-if s == 'Rivalry Team Comparisons':
-    st.title("Rivalry Team Comparisons")
+if s == 'Rivalry Team Comparison':
+    st.title("Rivalry Team Comparison")
     st.header('We are analyzing some of the rivalry teams in some NBA Finals (eg: 2016 Warriors vs Cavs; 2001 76ers vs Lakers; etc.)')
     st.markdown("We are comparing the PER of the players in these rival teams.")
     st.text('\n')
