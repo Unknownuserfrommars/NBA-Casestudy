@@ -1315,7 +1315,7 @@ if s == "Analysis of the NBA Championship teams in iconic seasons":
     champ_compare.update_xaxes(categoryorder='total descending', matches=None, showticklabels=True, tickangle=45)
     st.plotly_chart(champ_compare)
 
-    st.html("<hr style=\"height: 5px; background-color: red;\" />")
+    # st.html("<hr style=\"height: 5px; background-color: red;\" />")
     st.markdown("A SMALL CONCLUSION ↓")
     st.text("In the individual PER ratings, Magic Johnson stands out with his 35.54.")
     st.text("And as for the average PER, here is a table of the teams and their averaging PER:")
